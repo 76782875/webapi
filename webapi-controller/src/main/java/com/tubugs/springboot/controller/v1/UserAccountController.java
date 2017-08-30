@@ -5,7 +5,7 @@ import com.tubugs.springboot.controller.BaseController;
 import com.tubugs.springboot.dto.ResultDto;
 import com.tubugs.springboot.frame.ResponseVo;
 import com.tubugs.springboot.helper.RedisHelper;
-import com.tubugs.springboot.helper.RsaHelper;
+import com.tubugs.springboot.helper.AutoLoginHelper;
 import com.tubugs.springboot.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,7 +34,7 @@ public class UserAccountController extends BaseController {
     private UserService userService;
 
     @Autowired
-    private RsaHelper rsaHelper;
+    private AutoLoginHelper rsaHelper;
 
     @ApiOperation(value = "注册")
     @RequestMapping(value = "register", method = RequestMethod.POST)

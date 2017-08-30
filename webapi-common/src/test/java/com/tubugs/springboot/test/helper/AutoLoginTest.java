@@ -1,6 +1,6 @@
 package com.tubugs.springboot.test.helper;
 
-import com.tubugs.springboot.helper.RsaHelper;
+import com.tubugs.springboot.helper.AutoLoginHelper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -14,9 +14,9 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class RsaTest {
+public class AutoLoginTest {
     @Autowired
-    private RsaHelper rsaHelper;
+    private AutoLoginHelper rsaHelper;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 

@@ -11,12 +11,12 @@ import org.springframework.stereotype.Component;
  * Created by xuzhang on 2017/8/27.
  */
 @Component
-public class RsaHelper {
+public class AutoLoginHelper {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Value("${rsa.key.private}")
+    @Value("${atuologin.rsa.key.private}")
     private String privateKey;
-    @Value("${rsa.key.public}")
+    @Value("${atuologin.rsa.key.public}")
     private String publicKey;
 
     public String encrypt(String source) {

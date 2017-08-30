@@ -7,7 +7,7 @@ import com.tubugs.springboot.dao.entity.UserExample;
 import com.tubugs.springboot.dto.ResultDto;
 import com.tubugs.springboot.helper.PasswordHelper;
 import com.tubugs.springboot.helper.RedisHelper;
-import com.tubugs.springboot.helper.RsaHelper;
+import com.tubugs.springboot.helper.AutoLoginHelper;
 import com.tubugs.springboot.frame.SessionManager;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.ExcessiveAttemptsException;
@@ -31,7 +31,7 @@ public class UserService {
     private UserMapper userMapper;
 
     @Autowired
-    private RsaHelper rsaHelper;
+    private AutoLoginHelper rsaHelper;
 
     @Autowired
     private RedisHelper redis;
