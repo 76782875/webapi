@@ -5,3 +5,5 @@
 /webapi-service/webapi-service.iml
 /webapi.iml
 logs
+/webapi-service/target
+target

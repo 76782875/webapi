@@ -1,7 +1,7 @@
 package com.tubugs.springboot.test;
 
 import com.tubugs.springboot.service.sms.SMSServcie;
-import com.tubugs.springboot.service.sms.impl.SMSServiceAliyunImpl;
+import com.tubugs.springboot.service.sms.SMSServiceAliyunImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
