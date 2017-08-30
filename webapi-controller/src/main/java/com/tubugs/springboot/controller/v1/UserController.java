@@ -28,7 +28,7 @@ public class UserController extends BaseController {
     @ResponseBody
     //@Cacheable(value = "user_info", keyGenerator = "keyGenerator")
     public ResponseVo<User> info(@RequestParam String username) {
-        logger.info("get user:{} info", username);
+        logger.info(String.format("get user:%s info", username));
         return new ResponseVo(userService.getUserInfoByAccount(username));
     }
 }
