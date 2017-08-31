@@ -1,9 +1,11 @@
 package com.tubugs.springboot.helper;
 
+import com.tubugs.springboot.service.log.LogService;
 import com.tubugs.springboot.utils.Base64Util;
 import com.tubugs.springboot.utils.RSAUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +14,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class AutoLoginHelper {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    @Autowired
+    private LogService logger;
 
     @Value("${atuologin.rsa.key.private}")
     private String privateKey;

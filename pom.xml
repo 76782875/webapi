@@ -17,7 +17,6 @@
     <modules>
         <module>webapi-common</module>
         <module>webapi-dao</module>
-        <module>webapi-service</module>
         <module>webapi-controller</module>
     </modules>
 

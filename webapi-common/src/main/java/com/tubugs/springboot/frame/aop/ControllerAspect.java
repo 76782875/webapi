@@ -7,6 +7,7 @@ import com.tubugs.springboot.frame.ex.NoCsrfTokenException;
 import com.tubugs.springboot.frame.ex.NoRightException;
 import com.tubugs.springboot.helper.RedisHelper;
 import com.tubugs.springboot.frame.SessionManager;
+import com.tubugs.springboot.service.log.LogService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -29,7 +30,9 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 @Aspect
 public class ControllerAspect {
-    Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    @Autowired
+    private LogService logger;
 
     @Value("${csrf.on}")
     private boolean csrf_on;

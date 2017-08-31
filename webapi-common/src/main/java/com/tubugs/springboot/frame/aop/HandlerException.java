@@ -6,8 +6,10 @@ import com.tubugs.springboot.frame.ResponseVo;
 import com.tubugs.springboot.frame.ex.NoCsrfTokenException;
 import com.tubugs.springboot.frame.ex.NoRightException;
 import com.tubugs.springboot.frame.SessionManager;
+import com.tubugs.springboot.service.log.LogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -21,7 +23,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 @ControllerAdvice
 public class HandlerException {
-    private static final Logger logger = LoggerFactory.getLogger(HandlerException.class);
+    @Autowired
+    private LogService logger;
 
     //运行时异常
     @ExceptionHandler(Exception.class)

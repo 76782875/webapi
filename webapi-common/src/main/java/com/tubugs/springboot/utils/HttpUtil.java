@@ -1,5 +1,6 @@
 package com.tubugs.springboot.utils;
 
+import com.tubugs.springboot.service.log.LogService;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -24,6 +25,8 @@ import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLException;
@@ -43,8 +46,11 @@ import java.util.Map;
 /**
  * Created by xuzhang on 2017/7/5.
  */
+@Component
 public class HttpUtil {
-    private static final Logger logger = LoggerFactory.getLogger(HttpUtil.class);
+    @Autowired
+    private LogService logger;
+
     private static PoolingHttpClientConnectionManager connMgr;
     private static RequestConfig requestConfig;
     private static final int MAX_TIMEOUT = 7000;
@@ -74,7 +80,7 @@ public class HttpUtil {
      * @param url
      * @return
      */
-    public static String doGet(String url) {
+    public String doGet(String url) {
         return doGet(url, new HashMap<String, Object>());
     }
 
@@ -85,7 +91,7 @@ public class HttpUtil {
      * @param params
      * @return
      */
-    public static String doGet(String url, Map<String, Object> params) {
+    public String doGet(String url, Map<String, Object> params) {
         String apiUrl = url;
         StringBuffer param = new StringBuffer();
         int i = 0;
@@ -123,7 +129,7 @@ public class HttpUtil {
      * @param apiUrl
      * @return
      */
-    public static String doPost(String apiUrl) {
+    public String doPost(String apiUrl) {
         return doPost(apiUrl, new HashMap<String, Object>());
     }
 
@@ -134,7 +140,7 @@ public class HttpUtil {
      * @param params 参数map
      * @return
      */
-    public static String doPost(String apiUrl, Map<String, Object> params) {
+    public String doPost(String apiUrl, Map<String, Object> params) {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         String httpStr = null;
         HttpPost httpPost = new HttpPost(apiUrl);
@@ -174,7 +180,7 @@ public class HttpUtil {
      * @param json   json对象
      * @return
      */
-    public static String doPost(String apiUrl, Object json) {
+    public String doPost(String apiUrl, Object json) {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         String httpStr = null;
         HttpPost httpPost = new HttpPost(apiUrl);
@@ -211,7 +217,7 @@ public class HttpUtil {
      * @param params 参数map
      * @return
      */
-    public static String doPostSSL(String apiUrl, Map<String, Object> params) {
+    public String doPostSSL(String apiUrl, Map<String, Object> params) {
         CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(createSSLConnSocketFactory()).setConnectionManager(connMgr).setDefaultRequestConfig(requestConfig).build();
         HttpPost httpPost = new HttpPost(apiUrl);
         CloseableHttpResponse response = null;
@@ -257,7 +263,7 @@ public class HttpUtil {
      * @param json   JSON对象
      * @return
      */
-    public static String doPostSSL(String apiUrl, Object json) {
+    public String doPostSSL(String apiUrl, Object json) {
         CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(createSSLConnSocketFactory()).setConnectionManager(connMgr).setDefaultRequestConfig(requestConfig).build();
         HttpPost httpPost = new HttpPost(apiUrl);
         CloseableHttpResponse response = null;
@@ -298,7 +304,7 @@ public class HttpUtil {
      *
      * @return
      */
-    private static SSLConnectionSocketFactory createSSLConnSocketFactory() {
+    private SSLConnectionSocketFactory createSSLConnSocketFactory() {
         SSLConnectionSocketFactory sslsf = null;
         try {
             SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
