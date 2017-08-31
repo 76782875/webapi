@@ -68,6 +68,17 @@
                 <artifactId>logstash-logback-encoder</artifactId>
                 <version>4.11</version>
             </dependency>
+            <!--aliyun-->
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>aliyun-java-sdk-push</artifactId>
+                <version>3.5.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>aliyun-java-sdk-core</artifactId>
+                <version>3.2.5</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>
