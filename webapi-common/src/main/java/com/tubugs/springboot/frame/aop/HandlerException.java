@@ -3,13 +3,11 @@ package com.tubugs.springboot.frame.aop;
 import com.alibaba.fastjson.JSONObject;
 import com.tubugs.springboot.frame.ResponseStatus;
 import com.tubugs.springboot.frame.ResponseVo;
+import com.tubugs.springboot.frame.SessionManager;
 import com.tubugs.springboot.frame.ex.NoCsrfTokenException;
 import com.tubugs.springboot.frame.ex.NoRightException;
-import com.tubugs.springboot.frame.SessionManager;
-import com.tubugs.springboot.service.log.LogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -23,8 +21,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @ControllerAdvice
 public class HandlerException {
-    @Autowired
-    private LogService logger;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     //运行时异常
     @ExceptionHandler(Exception.class)

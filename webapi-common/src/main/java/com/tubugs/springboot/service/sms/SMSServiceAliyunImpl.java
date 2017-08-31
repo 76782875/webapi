@@ -1,8 +1,6 @@
 package com.tubugs.springboot.service.sms;
 
 import com.alibaba.fastjson.JSONObject;
-import com.tubugs.springboot.service.log.LogService;
-import com.tubugs.springboot.service.sms.SMSServcie;
 import com.tubugs.springboot.utils.HttpUtil;
 import com.tubugs.springboot.utils.NumberUtil;
 import org.slf4j.Logger;
@@ -15,8 +13,9 @@ import org.springframework.beans.factory.annotation.Value;
  * Created by xuzhang on 2017/8/29.
  */
 public class SMSServiceAliyunImpl implements SMSServcie {
-    @Autowired
-    private LogService logger;
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     private HttpUtil httpUtil;
 

@@ -1,10 +1,7 @@
 package com.tubugs.springboot.utils;
 
-import com.tubugs.springboot.service.log.LogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,12 +11,10 @@ import java.io.InputStreamReader;
 /**
  * Created by xuzhang on 2017/8/23.
  */
-@Component
 public class FileUtil {
-    @Autowired
-    private LogService logger;
+    private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
-    public String readTxt(String filePath, String encoding) {
+    public static String readTxt(String filePath, String encoding) {
         try {
             StringBuilder sb = new StringBuilder();
             File file = new File(filePath);
