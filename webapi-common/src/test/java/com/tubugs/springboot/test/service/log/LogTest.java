@@ -13,10 +13,10 @@ public class LogTest {
 
     @Test
     public void test() {
-        logger.debug("测试");
-        logger.info("测试");
-        logger.warn("测试");
-        logger.error("测试");
+        logger.debug("test");
+        logger.info("test");
+        logger.warn("test");
+        logger.error("test");
         try {
             int a = 1 / 0;
         } catch (Exception ex) {
