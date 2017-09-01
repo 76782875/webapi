@@ -14,7 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@Import(AliyunConfig.class)
+@Import(SMSAliyunConfig.class)
 public class AliyunTest {
     @Autowired
     private SMSServcie smsServcie;

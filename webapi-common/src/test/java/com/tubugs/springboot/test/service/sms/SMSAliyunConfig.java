@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
  * Created by xuzhang on 2017/8/31.
  */
 @TestConfiguration
-public class AliyunConfig {
+public class SMSAliyunConfig {
 
     @Bean
     public SMSServcie sms() {

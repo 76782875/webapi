@@ -16,9 +16,6 @@ public class SMSServiceAliyunImpl implements SMSServcie {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    private HttpUtil httpUtil;
-
     @Value("${sms.aliyun.accessKeyId}")
     private String accessKeyId;
     @Value("${sms.aliyun.accessSecret}")
@@ -90,7 +87,7 @@ public class SMSServiceAliyunImpl implements SMSServcie {
             String sign = sign(accessSecret + "&", stringToSign.toString());
             // 6. 签名最后也要做特殊URL编码
             String signature = specialUrlEncode(sign);
-            String result = httpUtil.doGet("http://dysmsapi.aliyuncs.com/?Signature=" + signature + sortQueryStringTmp);
+            String result = HttpUtil.doGet("http://dysmsapi.aliyuncs.com/?Signature=" + signature + sortQueryStringTmp);
             logger.info(result);
             return true;
         } catch (Exception ex) {
