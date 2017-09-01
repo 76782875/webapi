@@ -12,7 +12,7 @@ public class BaseController {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    protected Session getHttpSession() {
+    protected Session getSession() {
         return SecurityUtils.getSubject().getSession();
     }
 }

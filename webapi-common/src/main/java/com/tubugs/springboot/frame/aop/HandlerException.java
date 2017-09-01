@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.tubugs.springboot.frame.ResponseStatus;
 import com.tubugs.springboot.frame.ResponseVo;
 import com.tubugs.springboot.frame.SessionManager;
-import com.tubugs.springboot.frame.ex.NoCsrfTokenException;
+import com.tubugs.springboot.frame.ex.NoCSRFTokenException;
 import com.tubugs.springboot.frame.ex.NoRightException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +45,7 @@ public class HandlerException {
 //            return new ResponseVo(ResponseStatus.RESPONSE_NO_RIGHT);
 //        }
 
-        if (ex instanceof NoCsrfTokenException) {
+        if (ex instanceof NoCSRFTokenException) {
             return new ResponseVo(ResponseStatus.RESPONSE_NOT_CLIENT_REQUEST);
         } else if (ex instanceof NoRightException) {
             return new ResponseVo(ResponseStatus.RESPONSE_NO_RIGHT);

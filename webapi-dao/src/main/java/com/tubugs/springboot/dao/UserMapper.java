@@ -3,12 +3,10 @@ package com.tubugs.springboot.dao;
 import com.tubugs.springboot.dao.entity.User;
 import com.tubugs.springboot.dao.entity.UserExample;
 import com.tubugs.springboot.dao.entity.UserKey;
-
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-
 @Mapper
 public interface UserMapper {
     long countByExample(UserExample example);

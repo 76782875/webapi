@@ -19,6 +19,16 @@ public class RedisHelper {
         redis.expire(key, timeout, timeUnit);
     }
 
+    public long incAndExpire(String key, long timeout, TimeUnit timeUnit) {
+        long value = redis.opsForValue().increment(key, 1);
+        redis.expire(key, timeout, timeUnit);
+        return value;
+    }
+
+    public void remove(String key) {
+        redis.delete(key);
+    }
+
     public String get(String key) {
         return redis.opsForValue().get(key);
     }

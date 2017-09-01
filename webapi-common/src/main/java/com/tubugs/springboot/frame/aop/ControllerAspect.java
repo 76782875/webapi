@@ -4,7 +4,7 @@ package com.tubugs.springboot.frame.aop;
 import com.alibaba.fastjson.JSONObject;
 import com.tubugs.springboot.consts.RedisKey;
 import com.tubugs.springboot.frame.SessionManager;
-import com.tubugs.springboot.frame.ex.NoCsrfTokenException;
+import com.tubugs.springboot.frame.ex.NoCSRFTokenException;
 import com.tubugs.springboot.frame.ex.NoRightException;
 import com.tubugs.springboot.helper.RedisHelper;
 import org.apache.shiro.SecurityUtils;
@@ -52,7 +52,7 @@ public class ControllerAspect {
         if (csrf_on) {
             String csrf = request.getHeader("ticket");
             if (StringUtils.isEmpty(csrf)) {
-                throw new NoCsrfTokenException();
+                throw new NoCSRFTokenException();
             }
         }
 
@@ -60,7 +60,7 @@ public class ControllerAspect {
         Subject subject = SecurityUtils.getSubject();
         String account = SessionManager.getUserAccount();
         if (subject.isAuthenticated()) {
-            String user_unique_session_id = redisHelper.get(String.format(RedisKey.USER_UNIQUE_SESSIONID, account));
+            String user_unique_session_id = redisHelper.get(String.format(RedisKey.ONLY_LOGIN, account));
             if (!SessionManager.getSessionID().equals(user_unique_session_id)) {
                 subject.logout();
                 throw new NoRightException();

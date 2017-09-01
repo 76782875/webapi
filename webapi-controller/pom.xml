@@ -14,13 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>com.tubugs</groupId>
-            <artifactId>webapi-common</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.tubugs</groupId>
-            <artifactId>webapi-dao</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <artifactId>webapi-service</artifactId>
         </dependency>
     </dependencies>
 

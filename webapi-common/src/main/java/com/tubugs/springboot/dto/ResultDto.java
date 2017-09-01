@@ -5,20 +5,20 @@ package com.tubugs.springboot.dto;
  */
 public class ResultDto {
     private boolean success;
-    private String descript;
+    private String tip;
     private String extend;
 
     public ResultDto() {
     }
 
-    public ResultDto(boolean success, String descript) {
+    public ResultDto(boolean success, String tip) {
         this.success = success;
-        this.descript = descript;
+        this.tip = tip;
     }
 
-    public ResultDto(boolean success, String descript, String extend) {
+    public ResultDto(boolean success, String tip, String extend) {
         this.success = success;
-        this.descript = descript;
+        this.tip = tip;
         this.extend = extend;
     }
 
@@ -30,12 +30,12 @@ public class ResultDto {
         this.success = success;
     }
 
-    public String getDescript() {
-        return descript;
+    public String getTip() {
+        return tip;
     }
 
-    public void setDescript(String descript) {
-        this.descript = descript;
+    public void setTip(String tip) {
+        this.tip = tip;
     }
 
     public String getExtend() {

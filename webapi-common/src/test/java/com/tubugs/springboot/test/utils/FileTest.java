@@ -22,8 +22,5 @@ public class FileTest {
     public void test() {
         String txt = fileUtil.readTxt(ResourceUtil.getAbsolutePath("city.txt"), "UTF-8");
         System.out.println(txt);
-
-        txt = fileUtil.readTxt(ResourceUtil.getAbsolutePath("logback.xml"), "UTF-8");
-        System.out.println(txt);
     }
 }
