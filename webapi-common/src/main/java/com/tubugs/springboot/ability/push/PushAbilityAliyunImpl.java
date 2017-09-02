@@ -16,11 +16,11 @@ import org.springframework.beans.factory.annotation.Value;
  */
 public class PushAbilityAliyunImpl implements PushAbility {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    @Value("${push.aliyun.accessKeyId}")
+    @Value("${tubugs.push.aliyun.accessKeyId}")
     private String accessKeyId;
-    @Value("${push.aliyun.accessSecret}")
+    @Value("${tubugs.push.aliyun.accessSecret}")
     private String accessKeySecret;
-    @Value("${push.aliyun.appKey}")
+    @Value("${tubugs.push.aliyun.appKey}")
     private long appKey;
 
     @Override

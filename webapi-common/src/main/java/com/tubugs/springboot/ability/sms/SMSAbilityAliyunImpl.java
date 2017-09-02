@@ -15,13 +15,13 @@ public class SMSAbilityAliyunImpl implements SMSAbility {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Value("${sms.aliyun.accessKeyId}")
+    @Value("${tubugs.sms.aliyun.accessKeyId}")
     private String accessKeyId;
-    @Value("${sms.aliyun.accessSecret}")
+    @Value("${tubugs.sms.aliyun.accessSecret}")
     private String accessSecret;
-    @Value("${sms.aliyun.verifycode.templateCode}")
+    @Value("${tubugs.sms.aliyun.verifycode.templateCode}")
     private String verifyCodeTemplateCode;
-    @Value("${sms.aliyun.verifycode.signName}")
+    @Value("${tubugs.sms.aliyun.verifycode.signName}")
     private String verifyCodeSignName;
 
     @Override

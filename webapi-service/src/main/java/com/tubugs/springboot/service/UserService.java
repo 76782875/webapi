@@ -149,11 +149,11 @@ public class UserService {
             return new ResultDto(false, "连续输错5次密码，1天内不能继续登录"); //TODO 改成配置
         }
         //生成自动登录的token
-        String auto_login_key = String.format(RedisKey.AUTO_LOGIN, account);
+        String auto_login_key = String.format(RedisKey.LOGIN_AUTO, account);
         String auto_login_value = autoLoginHelper.encrypt(account + SPLIT_STRING + password);
         redisHelper.setAndExpire(auto_login_key, auto_login_value, 7, TimeUnit.DAYS);
-        //防止用户同时登录的控制
-        String only_login_key = String.format(RedisKey.ONLY_LOGIN, account);
+        //防止用户多地同时登录
+        String only_login_key = String.format(RedisKey.LOGIN_ONLY, account);
         String only_login_value = SessionManager.getSessionID();
         redisHelper.setAndExpire(only_login_key, only_login_value, 7, TimeUnit.DAYS);
         //设置用户编号到Session中
@@ -177,7 +177,7 @@ public class UserService {
         String account = results[0];
         String password = results[1];
         //客户端token与服务端token不一致，需要重新登录
-        String auto_login_key = String.format(RedisKey.AUTO_LOGIN, account);
+        String auto_login_key = String.format(RedisKey.LOGIN_AUTO, account);
         String server_token = redisHelper.get(auto_login_key);
         if (!client_token.equals(server_token))
             return new ResultDto(false, "token不一致");//TODO 改成配置
@@ -261,7 +261,7 @@ public class UserService {
         if (StringUtils.isEmpty(server_phone) || StringUtils.isEmpty(server_code))
             return new ResultDto(false, "需要先发送验证码");
 
-        long times = redisHelper.incAndExpire(String.format(RedisKey.REGISTER_CODE_FAIL_TIMES, server_phone), 1, TimeUnit.DAYS);
+        long times = redisHelper.incAndExpire(String.format(RedisKey.FORGET_CODE_FAIL_TIMES, server_phone), 1, TimeUnit.DAYS);
         if (times > 5) {//防止暴力验证
             return new ResultDto(false, "您已连续5次验证失败");
         }

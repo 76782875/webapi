@@ -15,7 +15,7 @@ import java.io.*;
  * Created by xuzhang on 2017/9/1.
  */
 public class FileAbilityLocalImpl implements FileAbility {
-    @Value("${file.localfile.root}")
+    @Value("${tubugs.file.local.root}")
     private String root;
 
     @Override

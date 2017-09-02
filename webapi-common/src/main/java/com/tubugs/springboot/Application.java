@@ -14,8 +14,6 @@ public class Application {
     public static void main(String[] args) {
         SpringApplication application = new SpringApplication(Application.class);
         Map<String, Object> defaultMap = new HashMap<String, Object>();
-        defaultMap.put("spring.session.store-type", "redis");
-        defaultMap.put("csrf.on", false);
         application.setDefaultProperties(defaultMap);
         application.run(args);
     }
