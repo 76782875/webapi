@@ -4,7 +4,7 @@ import com.tubugs.springboot.controller.BaseController;
 import com.tubugs.springboot.dto.ResultDto;
 import com.tubugs.springboot.frame.ResponseVo;
 import com.tubugs.springboot.frame.SessionManager;
-import com.tubugs.springboot.service.user.UserService;
+import com.tubugs.springboot.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;

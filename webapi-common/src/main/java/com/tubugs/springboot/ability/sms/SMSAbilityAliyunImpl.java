@@ -1,4 +1,4 @@
-package com.tubugs.springboot.service.sms;
+package com.tubugs.springboot.ability.sms;
 
 import com.alibaba.fastjson.JSONObject;
 import com.tubugs.springboot.utils.HttpUtil;
@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
  * 阿里云短信服务
  * Created by xuzhang on 2017/8/29.
  */
-public class SMSServiceAliyunImpl implements SMSServcie {
+public class SMSAbilityAliyunImpl implements SMSAbility {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 

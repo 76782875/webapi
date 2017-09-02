@@ -1,11 +1,11 @@
 package com.tubugs.springboot;
 
-import com.tubugs.springboot.service.file.FileService;
-import com.tubugs.springboot.service.file.LocalFileService;
-import com.tubugs.springboot.service.push.PushService;
-import com.tubugs.springboot.service.push.PushServiceAliyunImpl;
-import com.tubugs.springboot.service.sms.SMSServcie;
-import com.tubugs.springboot.service.sms.SMSServiceAliyunImpl;
+import com.tubugs.springboot.ability.file.FileAbility;
+import com.tubugs.springboot.ability.file.FileAbilityLocalImpl;
+import com.tubugs.springboot.ability.push.PushAbility;
+import com.tubugs.springboot.ability.push.PushAbilityAliyunImpl;
+import com.tubugs.springboot.ability.sms.SMSAbility;
+import com.tubugs.springboot.ability.sms.SMSAbilityAliyunImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,17 +15,17 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ServiceConfig {
     @Bean
-    public PushService push() {
-        return new PushServiceAliyunImpl();
+    public PushAbility push() {
+        return new PushAbilityAliyunImpl();
     }
 
     @Bean
-    public SMSServcie sms() {
-        return new SMSServiceAliyunImpl();
+    public SMSAbility sms() {
+        return new SMSAbilityAliyunImpl();
     }
 
     @Bean
-    public FileService file() {
-        return new LocalFileService();
+    public FileAbility file() {
+        return new FileAbilityLocalImpl();
     }
 }

@@ -1,4 +1,4 @@
-package com.tubugs.springboot.service.push;
+package com.tubugs.springboot.ability.push;
 
 import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.DefaultAcsClient;
@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 /**
  * Created by xuzhang on 2017/9/1.
  */
-public class PushServiceAliyunImpl implements PushService {
+public class PushAbilityAliyunImpl implements PushAbility {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Value("${push.aliyun.accessKeyId}")
     private String accessKeyId;

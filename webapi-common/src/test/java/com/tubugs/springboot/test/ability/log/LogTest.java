@@ -1,4 +1,4 @@
-package com.tubugs.springboot.test.service.log;
+package com.tubugs.springboot.test.ability.log;
 
 import org.junit.Test;
 import org.slf4j.Logger;

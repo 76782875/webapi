@@ -1,4 +1,4 @@
-package com.tubugs.springboot.service.file;
+package com.tubugs.springboot.ability.file;
 
 import com.tubugs.springboot.utils.UUIDUtil;
 import org.apache.http.HttpEntity;
@@ -14,8 +14,8 @@ import java.io.*;
 /**
  * Created by xuzhang on 2017/9/1.
  */
-public class LocalFileService implements FileService {
-    @Value("file.localfile.root")
+public class FileAbilityLocalImpl implements FileAbility {
+    @Value("${file.localfile.root}")
     private String root;
 
     @Override

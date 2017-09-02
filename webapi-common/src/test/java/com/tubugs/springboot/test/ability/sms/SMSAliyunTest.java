@@ -1,7 +1,7 @@
-package com.tubugs.springboot.test.service.sms;
+package com.tubugs.springboot.test.ability.sms;
 
 import com.alibaba.fastjson.JSONObject;
-import com.tubugs.springboot.service.sms.SMSServcie;
+import com.tubugs.springboot.ability.sms.SMSAbility;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +17,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 @Import(SMSAliyunConfig.class)
 public class SMSAliyunTest {
     @Autowired
-    private SMSServcie smsServcie;
+    private SMSAbility smsAbility;
 
     @Test
     public void sendVerifyCode() {
         //阿里云申请的短信模板：验证码${code}，有效期30分钟。如非本人操作，建议立即更改账户密码。
-        smsServcie.sendVerifyCode("13721061552");
+        smsAbility.sendVerifyCode("13721061552");
     }
 
     @Test
@@ -31,6 +31,6 @@ public class SMSAliyunTest {
         JSONObject json = new JSONObject();
         json.put("name", "猴九妹女士");
         json.put("time", "17:00");
-        smsServcie.send("SMS_90785004", "兔八哥", "13721061552", json);
+        smsAbility.send("SMS_90785004", "兔八哥", "13721061552", json);
     }
 }

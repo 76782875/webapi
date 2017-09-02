@@ -1,4 +1,4 @@
-package com.tubugs.springboot.service.user;
+package com.tubugs.springboot.service;
 
 import com.tubugs.springboot.consts.FileTagKey;
 import com.tubugs.springboot.consts.RedisKey;
@@ -11,8 +11,8 @@ import com.tubugs.springboot.dto.ResultDto;
 import com.tubugs.springboot.frame.SessionManager;
 import com.tubugs.springboot.helper.AutoLoginHelper;
 import com.tubugs.springboot.helper.RedisHelper;
-import com.tubugs.springboot.service.file.FileService;
-import com.tubugs.springboot.service.sms.SMSServcie;
+import com.tubugs.springboot.ability.file.FileAbility;
+import com.tubugs.springboot.ability.sms.SMSAbility;
 import com.tubugs.springboot.utils.NumberUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.ExcessiveAttemptsException;
@@ -49,13 +49,13 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
     @Autowired
-    private AutoLoginHelper rsaHelper;
+    private AutoLoginHelper autoLoginHelper;
     @Autowired
-    private RedisHelper redis;
+    private RedisHelper redisHelper;
     @Autowired
-    private FileService fileService;
+    private FileAbility fileAbility;
     @Autowired
-    private SMSServcie smsServcie;
+    private SMSAbility smsAbility;
 
     /**
      * 查询用户账号数据
@@ -77,11 +77,11 @@ public class UserService {
      * @return
      */
     public ResultDto registerSendCode(String account) {
-        long times = redis.incAndExpire(String.format(RedisKey.REGISTER_CODE_SEND_TIMES, account), 1, TimeUnit.DAYS);
+        long times = redisHelper.incAndExpire(String.format(RedisKey.REGISTER_CODE_SEND_TIMES, account), 1, TimeUnit.DAYS);
         if (times > 5) {//防止暴力破坏
             return new ResultDto(false, "每天只能发送5次手机验证码");
         }
-        String code = smsServcie.sendVerifyCode(account);
+        String code = smsAbility.sendVerifyCode(account);
         SessionManager.setSession(SessionKey.REGISTER_CODE, code);
         SessionManager.setSession(SessionKey.REGISTER_PHONE, account);
         return new ResultDto(true, "成功");
@@ -95,7 +95,7 @@ public class UserService {
         String account = SessionManager.getSession(SessionKey.REGISTER_PHONE);
         if (StringUtils.isEmpty(account))
             return new ResultDto(false, "请先发送验证码");
-        long times = redis.incAndExpire(String.format(RedisKey.REGISTER_CODE_FAIL_TIMES, account), 1, TimeUnit.DAYS);
+        long times = redisHelper.incAndExpire(String.format(RedisKey.REGISTER_CODE_FAIL_TIMES, account), 1, TimeUnit.DAYS);
         if (times > 5) {//防止暴力注册
             return new ResultDto(false, "您已连续5次验证失败");
         }
@@ -150,12 +150,12 @@ public class UserService {
         }
         //生成自动登录的token
         String auto_login_key = String.format(RedisKey.AUTO_LOGIN, account);
-        String auto_login_value = rsaHelper.encrypt(account + SPLIT_STRING + password);
-        redis.setAndExpire(auto_login_key, auto_login_value, 7, TimeUnit.DAYS);
+        String auto_login_value = autoLoginHelper.encrypt(account + SPLIT_STRING + password);
+        redisHelper.setAndExpire(auto_login_key, auto_login_value, 7, TimeUnit.DAYS);
         //防止用户同时登录的控制
         String only_login_key = String.format(RedisKey.ONLY_LOGIN, account);
         String only_login_value = SessionManager.getSessionID();
-        redis.setAndExpire(only_login_key, only_login_value, 7, TimeUnit.DAYS);
+        redisHelper.setAndExpire(only_login_key, only_login_value, 7, TimeUnit.DAYS);
         //设置用户编号到Session中
         User user = getUserByAccount(account);
         SessionManager.setSession(SessionKey.USER_NO, String.valueOf(user.getNo()));
@@ -169,7 +169,7 @@ public class UserService {
      * @return
      */
     public ResultDto loginAuto(String client_token) {
-        String accountAndPassword = rsaHelper.decrypt(client_token);
+        String accountAndPassword = autoLoginHelper.decrypt(client_token);
         //client_token解密失败，需要重新登录
         if (StringUtils.isEmpty(accountAndPassword))
             return new ResultDto(false, "client_token错误"); //TODO 改成配置
@@ -178,7 +178,7 @@ public class UserService {
         String password = results[1];
         //客户端token与服务端token不一致，需要重新登录
         String auto_login_key = String.format(RedisKey.AUTO_LOGIN, account);
-        String server_token = redis.get(auto_login_key);
+        String server_token = redisHelper.get(auto_login_key);
         if (!client_token.equals(server_token))
             return new ResultDto(false, "token不一致");//TODO 改成配置
         return login(account, password);
@@ -202,7 +202,7 @@ public class UserService {
         User user = new User();
         user.setNick_name(nick_name);
         if (avatar != null)
-            user.setAvatar(fileService.savePicture(FileTagKey.AVATAR, avatar));
+            user.setAvatar(fileAbility.savePicture(FileTagKey.AVATAR, avatar));
         user.setEmail(email);
         user.setSex(sex);
         if (!StringUtils.isEmpty(birthday))
@@ -239,11 +239,11 @@ public class UserService {
      * @return
      */
     public ResultDto forgetSendCode(String account) {
-        long times = redis.incAndExpire(String.format(RedisKey.FORGET_CODE_SEND_TIMES, account), 1, TimeUnit.DAYS);
+        long times = redisHelper.incAndExpire(String.format(RedisKey.FORGET_CODE_SEND_TIMES, account), 1, TimeUnit.DAYS);
         if (times > 5) {//防止暴力破坏
             return new ResultDto(false, "每天只能发送5次手机验证码");
         }
-        String code = smsServcie.sendVerifyCode(account);
+        String code = smsAbility.sendVerifyCode(account);
         SessionManager.setSession(SessionKey.FORGET_PHONE, account);
         SessionManager.setSession(SessionKey.FORGET_CODE, code);
         return new ResultDto(true, "成功");
@@ -261,7 +261,7 @@ public class UserService {
         if (StringUtils.isEmpty(server_phone) || StringUtils.isEmpty(server_code))
             return new ResultDto(false, "需要先发送验证码");
 
-        long times = redis.incAndExpire(String.format(RedisKey.REGISTER_CODE_FAIL_TIMES, server_phone), 1, TimeUnit.DAYS);
+        long times = redisHelper.incAndExpire(String.format(RedisKey.REGISTER_CODE_FAIL_TIMES, server_phone), 1, TimeUnit.DAYS);
         if (times > 5) {//防止暴力验证
             return new ResultDto(false, "您已连续5次验证失败");
         }

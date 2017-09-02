@@ -1,11 +1,11 @@
-package com.tubugs.springboot.service.sms;
+package com.tubugs.springboot.ability.sms;
 
 import com.alibaba.fastjson.JSONObject;
 
 /**
  * Created by xuzhang on 2017/8/29.
  */
-public interface SMSServcie {
+public interface SMSAbility {
 
     /**
      * 发送普通短信消息

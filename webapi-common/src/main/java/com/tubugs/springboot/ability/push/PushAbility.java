@@ -1,11 +1,11 @@
-package com.tubugs.springboot.service.push;
+package com.tubugs.springboot.ability.push;
 
 import com.alibaba.fastjson.JSONObject;
 
 /**
  * Created by xuzhang on 2017/9/1.
  */
-public interface PushService {
+public interface PushAbility {
 
     /**
      * 发送消息

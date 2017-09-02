@@ -1,7 +1,7 @@
-package com.tubugs.springboot.test.service.push;
+package com.tubugs.springboot.test.ability.push;
 
 import com.aliyuncs.exceptions.ClientException;
-import com.tubugs.springboot.service.push.PushService;
+import com.tubugs.springboot.ability.push.PushAbility;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,17 +19,17 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class PushAliyunTest {
 
     @Autowired
-    private PushService pushService;
+    private PushAbility pushAbility;
 
     @Test
     public void testMessage() throws ClientException {
-        boolean result = pushService.sendMessage("13721061552", "兔八哥", "兔八哥测试阿里云消息推送", null);
+        boolean result = pushAbility.sendMessage("13721061552", "兔八哥", "兔八哥测试阿里云消息推送", null);
         Assert.assertTrue(result);
     }
 
     @Test
     public void testNotice() throws ClientException {
-        boolean result = pushService.sendNotice("13721061552", "兔八哥", "兔八哥测试阿里云消息推送", null);
+        boolean result = pushAbility.sendNotice("13721061552", "兔八哥", "兔八哥测试阿里云消息推送", null);
         Assert.assertTrue(result);
     }
 }

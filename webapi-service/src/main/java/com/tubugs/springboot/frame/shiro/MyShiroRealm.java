@@ -1,9 +1,7 @@
 package com.tubugs.springboot.frame.shiro;
 
-import com.tubugs.springboot.consts.SessionKey;
 import com.tubugs.springboot.dao.entity.User;
-import com.tubugs.springboot.frame.SessionManager;
-import com.tubugs.springboot.service.user.UserService;
+import com.tubugs.springboot.service.UserService;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;

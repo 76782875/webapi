@@ -3,8 +3,7 @@ package com.tubugs.springboot.controller.v1;
 import com.tubugs.springboot.controller.BaseController;
 import com.tubugs.springboot.dto.ResultDto;
 import com.tubugs.springboot.frame.ResponseVo;
-import com.tubugs.springboot.frame.SessionManager;
-import com.tubugs.springboot.service.user.UserService;
+import com.tubugs.springboot.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.SecurityUtils;
@@ -15,9 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 /**
  * Created by xuzhang on 2017/8/26.
