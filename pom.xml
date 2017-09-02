@@ -19,6 +19,8 @@
         <module>webapi-dao</module>
         <module>webapi-controller</module>
         <module>webapi-service</module>
+        <module>webapi-service-cms</module>
+        <module>webapi-service-shop</module>
     </modules>
 
     <dependencyManagement>

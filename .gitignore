@@ -7,3 +7,5 @@
 logs
 /webapi-service/target
 target
+/webapi-service-shop/*.iml
+/webapi-service-cms/*.iml
