@@ -35,7 +35,25 @@
         </javaClientGenerator>
 
         <!--<table tableName="user" domainObjectName="User">-->
-            <!--<property name="useActualColumnNames" value="true"/>-->
+        <!--<property name="useActualColumnNames" value="true"/>-->
+        <!--</table>-->
+        <!--<table tableName="role" domainObjectName="Role">-->
+        <!--<property name="useActualColumnNames" value="true"/>-->
+        <!--</table>-->
+        <!--<table tableName="permission" domainObjectName="Permission">-->
+        <!--<property name="useActualColumnNames" value="true"/>-->
+        <!--</table>-->
+        <!--<table tableName="organization" domainObjectName="Organization">-->
+        <!--<property name="useActualColumnNames" value="true"/>-->
+        <!--</table>-->
+        <!--<table tableName="user_and_role" domainObjectName="UserAndRole">-->
+        <!--<property name="useActualColumnNames" value="true"/>-->
+        <!--</table>-->
+        <!--<table tableName="user_and_organization" domainObjectName="UserAndOrganization">-->
+        <!--<property name="useActualColumnNames" value="true"/>-->
+        <!--</table>-->
+        <!--<table tableName="role_and_permission" domainObjectName="RoleAndPermission">-->
+        <!--<property name="useActualColumnNames" value="true"/>-->
         <!--</table>-->
     </context>
 </generatorConfiguration>
