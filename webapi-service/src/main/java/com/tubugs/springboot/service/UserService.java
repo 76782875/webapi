@@ -240,6 +240,7 @@ public class UserService {
         user.setSex(sex);
         if (!StringUtils.isEmpty(birthday))
             user.setBirthday(new Date(birthday));
+        user.setUpdateTime(new Date());
         userMapper.updateByExampleSelective(user, example);
         return true;
     }
@@ -363,6 +364,7 @@ public class UserService {
         String computed_pwd = PwdUtil.computePwdWithSalt(pwd, salt);
         User user = new User();
         user.setPassword(computed_pwd);
+        user.setUpdateTime(new Date());
         Example example = new Example(User.class);
         example.createCriteria().andEqualTo("account", account);
         userMapper.updateByExampleSelective(user, example);
