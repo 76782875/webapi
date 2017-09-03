@@ -27,18 +27,18 @@ public class UserAccountController extends BaseController {
     private UserService userService;
 
     @ApiOperation(value = "发送注册验证码")
-    @RequestMapping(value = "register_send_code", method = RequestMethod.POST)
+    @RequestMapping(value = "phone_register_send_code", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseVo<ResultDto> register_send_code(@RequestParam String account) {
-        ResultDto resultDto = userService.registerSendCode(account);
+    public ResponseVo<ResultDto> phone_register_send_code(@RequestParam String phone) {
+        ResultDto resultDto = userService.phoneRegisterSendCode(phone);
         return new ResponseVo(resultDto);
     }
 
     @ApiOperation(value = "注册")
-    @RequestMapping(value = "register", method = RequestMethod.POST)
+    @RequestMapping(value = "phone_register", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseVo<ResultDto> register(@RequestParam String password, @RequestParam String client_code) {
-        ResultDto resultDto = userService.register(password, client_code);
+    public ResponseVo<ResultDto> phone_register(@RequestParam String password, @RequestParam String client_code) {
+        ResultDto resultDto = userService.phoneRegister(password, client_code);
         return new ResponseVo(resultDto);
     }
 
@@ -68,26 +68,26 @@ public class UserAccountController extends BaseController {
     }
 
     @ApiOperation(value = "忘记密码-发送验证码")
-    @RequestMapping(value = "forget_send_code", method = RequestMethod.POST)
+    @RequestMapping(value = "phone_forget_send_code", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseVo<ResultDto> forget_send_code(@RequestParam String account) {
-        ResultDto resultDto = userService.forgetSendCode(account);
+    public ResponseVo<ResultDto> phone_forget_send_code(@RequestParam String phone) {
+        ResultDto resultDto = userService.phoneForgetSendCode(phone);
         return new ResponseVo(resultDto);
     }
 
     @ApiOperation(value = "忘记密码-验证验证码")
-    @RequestMapping(value = "forget_verify_code", method = RequestMethod.POST)
+    @RequestMapping(value = "phone_forget_verify_code", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseVo<ResultDto> forget_verify_code(@RequestParam String client_code) {
-        ResultDto resultDto = userService.forgetVerifyCode(client_code);
+    public ResponseVo<ResultDto> phone_forget_verify_code(@RequestParam String client_code) {
+        ResultDto resultDto = userService.phoneForgetVerifyCode(client_code);
         return new ResponseVo(resultDto);
     }
 
     @ApiOperation(value = "忘记密码-修改密码")
-    @RequestMapping(value = "forget_modify_pwd", method = RequestMethod.POST)
+    @RequestMapping(value = "phone_forget_modify_pwd", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseVo<ResultDto> forget_modify_pwd(@RequestParam String new_pwd) {
-        ResultDto resultDto = userService.forgetModifyPwd(new_pwd);
+    public ResponseVo<ResultDto> phone_forget_modify_pwd(@RequestParam String new_pwd) {
+        ResultDto resultDto = userService.phoneForgetModifyPwd(new_pwd);
         return new ResponseVo(resultDto);
     }
 }

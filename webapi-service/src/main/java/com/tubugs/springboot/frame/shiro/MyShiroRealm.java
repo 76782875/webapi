@@ -40,15 +40,20 @@ public class MyShiroRealm extends AuthorizingRealm {
         //TODO 实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro自己也是有时间间隔机制，2分钟内不会重复执行该方法
         User user = userService.getUserByAccount(account);
         String key = String.format(RedisKey.LOGIN_FAIL_TIMES, account);
-        if (user == null) // 用户不存在
+        // 用户不存在
+        if (user == null)
             throw new UnknownAccountException();
-        if (redisHelper.incAndExpire(key, 1, TimeUnit.DAYS) > 5) //当用户连续输入密码错误5次以上，禁止用户登录一段时间(一天)
+        //当用户连续输入密码错误5次以上，禁止用户登录一段时间(一天)
+        if (redisHelper.incAndExpire(key, 1, TimeUnit.DAYS) > 5)
             throw new ExcessiveAttemptsException();
-        if (!user.getPassword().equals(PwdUtil.computePwdWithSalt(password, user.getSalt())))//密码不正确
+        //密码不正确
+        if (!user.getPassword().equals(PwdUtil.computePwdWithSalt(password, user.getSalt())))
             throw new IncorrectCredentialsException();
-        if (!user.getStatus().equals(StatusKey.Available))//用户状态不可用
+        //用户状态不可用
+        if (!user.getStatus().equals(StatusKey.Available))
             throw new DisabledAccountException();
-        redisHelper.remove(key);//密码正确，清除对应key
+        //密码正确，清除对应key
+        redisHelper.remove(key);
         SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(account, password, getName());
         return authenticationInfo;
     }

@@ -9,7 +9,7 @@ public enum ResponseStatus {
     RESPONSE_ERROR_PARAMS("0002", "参数错误"),
     RESPONSE_NO_RIGHT("0003", "没有权限"),
     RESPONSE_KICK("0004", "同时登录，被踢下线"),
-    RESPONSE_CSRF("0005", "CSRF攻击"),;
+    RESPONSE_CSRF("0005", "CSRF攻击");
 
     ResponseStatus(String code, String des) {
         this.code = code;

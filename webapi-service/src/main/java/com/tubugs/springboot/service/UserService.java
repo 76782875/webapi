@@ -10,6 +10,7 @@ import com.tubugs.springboot.dao.entity.User;
 import com.tubugs.springboot.dao.mapper.UserMapper;
 import com.tubugs.springboot.dto.ResultDto;
 import com.tubugs.springboot.frame.SessionManager;
+import com.tubugs.springboot.frame.validator.Validator;
 import com.tubugs.springboot.helper.AutoLoginHelper;
 import com.tubugs.springboot.helper.RedisHelper;
 import com.tubugs.springboot.utils.NumberUtil;
@@ -67,55 +68,78 @@ public class UserService {
     }
 
     /**
-     * 注册时发送手机验证码
+     * 查询用户账号数据
      *
-     * @param account
+     * @param phone
      * @return
      */
-    public ResultDto registerSendCode(String account) {
-        long times = redisHelper.incAndExpire(String.format(RedisKey.REGISTER_CODE_SEND_TIMES, account), 1, TimeUnit.DAYS);
-        if (times > 5) {//防止暴力破坏
-            return new ResultDto(false, "每天只能发送5次手机验证码");
-        }
-        String code = smsAbility.sendVerifyCode(account);
+    public User getUserByPhone(String phone) {
+        Example example = new Example(User.class);
+        example.createCriteria().andEqualTo("phone", phone);
+        List<User> users = userMapper.selectByExample(example);
+        return users != null && users.size() > 0 ? users.get(0) : null;
+    }
+
+    /**
+     * 注册时发送手机验证码
+     *
+     * @param phone
+     * @return
+     */
+    public ResultDto phoneRegisterSendCode(String phone) {
+        //1.手机号合法性检查
+        Validator.checkPhone(phone);
+        //2.用户是否注册过检查
+        if (getUserByPhone(phone) != null)
+            return new ResultDto(false, "此手机号已注册过");
+        //3.防止短信接口被暴力调用
+        long times = redisHelper.incAndExpire(String.format(RedisKey.REGISTER_CODE_SEND_TIMES, phone), 1, TimeUnit.DAYS);
+        if (times > 5)
+            return new ResultDto(false, "发送验证码超过每日上限5次");
+        //4.发送短信验证码
+        String code = smsAbility.sendVerifyCode(phone);
+        //5.会话中保存手机号、验证码
         SessionManager.setSession(SessionKey.REGISTER_CODE, code);
-        SessionManager.setSession(SessionKey.REGISTER_PHONE, account);
+        SessionManager.setSession(SessionKey.REGISTER_PHONE, phone);
         return new ResultDto(true, "成功");
     }
 
     /**
      * 手机注册
      */
-    public ResultDto register(String password, String client_code) {
-        //验证码校验
+    public ResultDto phoneRegister(String password, String client_code) {
+        //1.参数校验
+        Validator.checkNotNull(password, "密码");
+        Validator.checkNotNull(client_code, "验证码");
+        //2.查看手机号是否发送过验证码
         String account = SessionManager.getSession(SessionKey.REGISTER_PHONE);
-        if (StringUtils.isEmpty(account))
-            return new ResultDto(false, "请先发送验证码");
-        long times = redisHelper.incAndExpire(String.format(RedisKey.REGISTER_CODE_FAIL_TIMES, account), 1, TimeUnit.DAYS);
-        if (times > 5) {//防止暴力注册
-            return new ResultDto(false, "您已连续5次验证失败");
-        }
         String code = SessionManager.getSession(SessionKey.REGISTER_CODE);
-        if (!client_code.equals(code)) {
+        if (StringUtils.isEmpty(account) || StringUtils.isEmpty(code))
+            return new ResultDto(false, "请先发送验证码");
+        //3.防止暴力注册
+        long times = redisHelper.incAndExpire(String.format(RedisKey.REGISTER_CODE_FAIL_TIMES, account), 1, TimeUnit.DAYS);
+        if (times > 5)
+            return new ResultDto(false, "超过每日失败验证上限5次");
+        //4.校验验证码是否正确
+        if (!client_code.equals(code))
             return new ResultDto(false, "验证码错误");
-        }
-        //移除session
+        //5.移除会话中的手机号、验证码
         SessionManager.removeSession(SessionKey.REGISTER_CODE);
         SessionManager.removeSession(SessionKey.REGISTER_PHONE);
-        //注册
+        //6.注册
+        String salt = randomNumberGenerator.nextBytes().toHex();
         User user = new User();
         user.setAccount(account);
+        user.setPhone(account);
+        user.setStatus(StatusKey.Available);
         user.setCreateTime(new Date());
         user.setUpdateTime(new Date());
-        user.setStatus(StatusKey.Available);
-        String salt = randomNumberGenerator.nextBytes().toHex();
         user.setSalt(salt);
         user.setPassword(PwdUtil.computePwdWithSalt(password, salt));
         int tryTime = 3;
         while (tryTime > 0) {
             try {
-                //生成的用户编号有可能会冲突，故尝试三次
-                //TODO 暂不支持数据库水平分库
+                //生成的用户编号有可能会冲突，故尝试三次 TODO 暂不支持数据库水平分库
                 user.setNo(NumberUtil.generateUserNo());
                 userMapper.insert(user);
                 return new ResultDto(true, "成功");
@@ -123,7 +147,7 @@ public class UserService {
                 tryTime--;
             }
         }
-        return new ResultDto(false, "注册失败,用户编号不够用");
+        return new ResultDto(false, "注册失败，需增加用户编号位数");
     }
 
     /**
@@ -134,32 +158,35 @@ public class UserService {
      * @return 自动登录token
      */
     public ResultDto login(String account, String password) {
-        //登录(使用shiro)
+        //1.参数校验
+        Validator.checkNotNull(account, "账号");
+        Validator.checkNotNull(password, "密码");
+        //2.登录(使用shiro)
         UsernamePasswordToken token = new UsernamePasswordToken(account, password);
         Subject subject = SecurityUtils.getSubject();
         try {
             subject.login(token);
         } catch (IncorrectCredentialsException ex) {
-            return new ResultDto(false, "密码错误"); //TODO 改成配置
+            return new ResultDto(false, "密码错误");
         } catch (ExcessiveAttemptsException ex) {
-            return new ResultDto(false, "连续输错5次密码，1天内不能继续登录"); //TODO 改成配置
+            return new ResultDto(false, "连续输错5次密码，1天内不能继续登录");
         } catch (UnknownAccountException ex) {
-            return new ResultDto(false, "用户不存在"); //TODO 改成配置
+            return new ResultDto(false, "用户不存在");
         } catch (DisabledAccountException ex) {
-            return new ResultDto(false, "用户状态不可用"); //TODO 改成配置
+            return new ResultDto(false, "用户状态不可用");
         }
-        //生成自动登录的token
+        //3.生成自动登录的token
         String auto_login_key = String.format(RedisKey.LOGIN_AUTO, account);
         String auto_login_value = autoLoginHelper.encrypt(account + SPLIT_STRING + password);
         redisHelper.setAndExpire(auto_login_key, auto_login_value, 7, TimeUnit.DAYS);
-        //防止用户多地同时登录
+        //4.防止用户同时登录
         String only_login_key = String.format(RedisKey.LOGIN_ONLY, account);
         String only_login_value = SessionManager.getSessionID();
         redisHelper.setAndExpire(only_login_key, only_login_value, 7, TimeUnit.DAYS);
-        //设置用户编号到Session中
+        //5.设置用户编号到Session中
         User user = getUserByAccount(account);
         SessionManager.setSession(SessionKey.USER_NO, String.valueOf(user.getNo()));
-        return new ResultDto(true, "成功", auto_login_value); //TODO 改成配置
+        return new ResultDto(true, "成功", auto_login_value);
     }
 
     /**
@@ -169,18 +196,21 @@ public class UserService {
      * @return
      */
     public ResultDto loginAuto(String client_token) {
+        //1.参数校验
+        Validator.checkNotNull(client_token, "令牌");
+        //2.解密令牌
         String accountAndPassword = autoLoginHelper.decrypt(client_token);
-        //client_token解密失败，需要重新登录
         if (StringUtils.isEmpty(accountAndPassword))
-            return new ResultDto(false, "client_token错误"); //TODO 改成配置
+            return new ResultDto(false, "解密令牌失败");
+        //3.校验令牌是否正确
         String[] results = accountAndPassword.split(SPLIT_STRING);
         String account = results[0];
         String password = results[1];
-        //客户端token与服务端token不一致，需要重新登录
         String auto_login_key = String.format(RedisKey.LOGIN_AUTO, account);
         String server_token = redisHelper.get(auto_login_key);
         if (!client_token.equals(server_token))
-            return new ResultDto(false, "token不一致");//TODO 改成配置
+            return new ResultDto(false, "令牌错误");
+        //4.登录
         return login(account, password);
     }
 
@@ -197,6 +227,9 @@ public class UserService {
      * @throws IOException
      */
     public Boolean modifyInfo(String account, String nick_name, MultipartFile avatar, String email, byte sex, String birthday) throws IOException {
+        //1.参数校验
+        Validator.checkNotNull(account, "账号");
+        //2.更新用户
         Example example = new Example(User.class);
         example.createCriteria().andEqualTo("account", account);
         User user = new User();
@@ -220,31 +253,45 @@ public class UserService {
      * @return
      */
     public ResultDto modifyPwd(String account, String old_pwd, String new_pwd) {
+        //1.参数校验
+        Validator.checkNotNull(account, "账号");
+        Validator.checkNotNull(old_pwd, "旧密码");
+        Validator.checkNotNull(new_pwd, "新密码");
+        //2.查询用户
         User user = getUserByAccount(account);
         if (user == null)
             return new ResultDto(false, "用户不存在");
+        //3.校验密码
         String computed_old_pwd = PwdUtil.computePwdWithSalt(old_pwd, user.getSalt());
         if (!user.getPassword().equals(computed_old_pwd))
             return new ResultDto(false, "原始密码错误");
-
-        //更新用户密码
+        //4.更新用户密码
         updateUserPwd(account, user.getSalt(), new_pwd);
+        //5.重新登录
         return login(account, new_pwd);
     }
 
     /**
      * 忘记密码-发送验证码
      *
-     * @param account
+     * @param phone
      * @return
      */
-    public ResultDto forgetSendCode(String account) {
-        long times = redisHelper.incAndExpire(String.format(RedisKey.FORGET_CODE_SEND_TIMES, account), 1, TimeUnit.DAYS);
-        if (times > 5) {//防止暴力破坏
-            return new ResultDto(false, "每天只能发送5次手机验证码");
-        }
-        String code = smsAbility.sendVerifyCode(account);
-        SessionManager.setSession(SessionKey.FORGET_PHONE, account);
+    public ResultDto phoneForgetSendCode(String phone) {
+        //1.手机号合法性检查
+        Validator.checkPhone(phone);
+        //2.查询用户
+        User user = getUserByPhone(phone);
+        if (user == null)
+            return new ResultDto(false, "用户不存在");
+        //3.防止暴力破坏
+        long times = redisHelper.incAndExpire(String.format(RedisKey.FORGET_CODE_SEND_TIMES, phone), 1, TimeUnit.DAYS);
+        if (times > 5)
+            return new ResultDto(false, "发送验证码超过每日上限5次");
+        //4.发送验证码
+        String code = smsAbility.sendVerifyCode(phone);
+        //5.会话添加手机号、验证码
+        SessionManager.setSession(SessionKey.FORGET_PHONE, phone);
         SessionManager.setSession(SessionKey.FORGET_CODE, code);
         return new ResultDto(true, "成功");
     }
@@ -255,21 +302,22 @@ public class UserService {
      * @param client_code
      * @return
      */
-    public ResultDto forgetVerifyCode(String client_code) {
+    public ResultDto phoneForgetVerifyCode(String client_code) {
+        //1.参数校验
+        Validator.checkNotNull(client_code, "验证码");
+        //2.是否发送过验证
         String server_phone = SessionManager.getSession(SessionKey.FORGET_PHONE);
         String server_code = SessionManager.getSession(SessionKey.FORGET_CODE);
         if (StringUtils.isEmpty(server_phone) || StringUtils.isEmpty(server_code))
             return new ResultDto(false, "需要先发送验证码");
-
+        //3.防止暴力验证
         long times = redisHelper.incAndExpire(String.format(RedisKey.FORGET_CODE_FAIL_TIMES, server_phone), 1, TimeUnit.DAYS);
-        if (times > 5) {//防止暴力验证
-            return new ResultDto(false, "您已连续5次验证失败");
-        }
-
-        if (!client_code.equals(server_code)) {
+        if (times > 5)
+            return new ResultDto(false, "超过每日失败验证上限5次");
+        //4.校验验证码是否正确
+        if (!client_code.equals(server_code))
             return new ResultDto(false, "验证码错误");
-        }
-
+        //5.会话设置校验结果
         SessionManager.setSession(SessionKey.FORGET_CODE_PASS, "pass");
         return new ResultDto(true, "成功");
     }
@@ -280,27 +328,29 @@ public class UserService {
      * @param new_pwd
      * @return
      */
-    public ResultDto forgetModifyPwd(String new_pwd) {
+    public ResultDto phoneForgetModifyPwd(String new_pwd) {
+        //1.参数校验
+        Validator.checkNotNull(new_pwd, "密码");
+        //2.验证码是否校验通过
         String forget_code_pass = SessionManager.getSession(SessionKey.FORGET_CODE_PASS);
         if (StringUtils.isEmpty(forget_code_pass))
             return new ResultDto(false, "请先完成校验");
-        String account = SessionManager.getSession(SessionKey.FORGET_PHONE);
-        if (StringUtils.isEmpty(account))
+        //3.查询会话中的账号
+        String phone = SessionManager.getSession(SessionKey.FORGET_PHONE);
+        if (StringUtils.isEmpty(phone))
             return new ResultDto(false, "账号为空");
-        User user = getUserByAccount(account);
+        //4.查询对应用户
+        User user = getUserByPhone(phone);
         if (user == null)
             return new ResultDto(false, "不存在此用户");
-
-        //更新用户密码
-        updateUserPwd(account, user.getSalt(), new_pwd);
-
-        //移除对应session
+        //5.更新用户密码
+        updateUserPwd(user.getAccount(), user.getSalt(), new_pwd);
+        //6.清除会话中的标记位
         SessionManager.removeSession(SessionKey.FORGET_PHONE);
         SessionManager.removeSession(SessionKey.FORGET_CODE);
         SessionManager.removeSession(SessionKey.FORGET_CODE_PASS);
         return new ResultDto(true, "成功");
     }
-
 
     /**
      * 更新用户密码

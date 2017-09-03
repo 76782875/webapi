@@ -6,6 +6,7 @@ import com.tubugs.springboot.frame.ResponseVo;
 import com.tubugs.springboot.frame.SessionManager;
 import com.tubugs.springboot.frame.ex.CsrfException;
 import com.tubugs.springboot.frame.ex.KickException;
+import com.tubugs.springboot.frame.validator.ParamError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -35,22 +36,16 @@ public class HandlerException {
                 String.format("%s %s %s", r.getMethod(), r.getRequestURI(), JSONObject.toJSONString(r.getParameterMap()))
         );
 
-//        if (ex instanceof ValidationException || ex instanceof MissingServletRequestParameterException) {
-//            //参数错误
-//            ResponseVo responseVo = new ResponseVo<>(ResponseStatus.RESPONSE_ERROR_PARAMS);
-//            responseVo.setDes(responseVo.getDes() + ":" + ex.getMessage());
-//            return responseVo;
-//        } else if (ex instanceof NoLoginException) {
-//            //没有权限
-//            return new ResponseVo(ResponseStatus.RESPONSE_NO_RIGHT);
-//        }
-
         if (ex instanceof CsrfException) {
+            //CSRF攻击
             return new ResponseVo(ResponseStatus.RESPONSE_CSRF);
         } else if (ex instanceof KickException) {
+            //禁止用户同时登录
             return new ResponseVo(ResponseStatus.RESPONSE_KICK);
+        } else if (ex instanceof ParamError) {
+            //参数错误
+            return new ResponseVo(ResponseStatus.RESPONSE_ERROR_PARAMS, ex.getMessage());
         }
-
 
         //内部异常
         logger.error("Exception :" + request, ex);

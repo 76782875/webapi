@@ -24,6 +24,12 @@ public class ResponseVo<E> {
         this.des = responseStatus.getDes();
     }
 
+    public ResponseVo(ResponseStatus responseStatus, E data) {
+        this.msg = responseStatus.getCode();
+        this.des = responseStatus.getDes();
+        this.data = data;
+    }
+
     public String getDes() {
         return des;
     }
