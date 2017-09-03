@@ -2,11 +2,13 @@ package com.tubugs.springboot.test.ability.sms;
 
 import com.alibaba.fastjson.JSONObject;
 import com.tubugs.springboot.ability.sms.SMSAbility;
+import com.tubugs.springboot.ability.sms.SMSAbilityAliyunImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
@@ -14,7 +16,6 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@Import(SMSAliyunConfig.class)
 public class SMSAliyunTest {
     @Autowired
     private SMSAbility smsAbility;
@@ -32,5 +33,13 @@ public class SMSAliyunTest {
         json.put("name", "猴九妹女士");
         json.put("time", "17:00");
         smsAbility.send("SMS_90785004", "兔八哥", "13721061552", json);
+    }
+
+    @TestConfiguration
+    static class Config {
+        @Bean
+        public SMSAbility sms() {
+            return new SMSAbilityAliyunImpl();
+        }
     }
 }

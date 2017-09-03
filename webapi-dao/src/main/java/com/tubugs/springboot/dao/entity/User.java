@@ -1,9 +1,16 @@
 package com.tubugs.springboot.dao.entity;
 
-import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.*;
 
-public class User extends UserKey implements Serializable {
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    /**
+     * 开始使用9位数，随着用户量增大，可以不断扩展
+     */
     private Long no;
 
     private String account;
@@ -14,174 +21,236 @@ public class User extends UserKey implements Serializable {
 
     private String phone;
 
-    private String nick_name;
+    @Column(name = "nick_name")
+    private String nickName;
 
     private String avatar;
 
     private String email;
 
+    /**
+     * 0未知 1男 2女
+     */
     private Byte sex;
 
     private Date birthday;
 
+    /**
+     * 0待审核 1正常 2禁用
+     */
     private Byte status;
 
-    private Date create_time;
+    @Column(name = "create_time")
+    private Date createTime;
 
-    private Date update_time;
+    @Column(name = "update_time")
+    private Date updateTime;
 
-    private static final long serialVersionUID = 1L;
+    /**
+     * @return id
+     */
+    public Long getId() {
+        return id;
+    }
 
+    /**
+     * @param id
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
+     * 获取开始使用9位数，随着用户量增大，可以不断扩展
+     *
+     * @return no - 开始使用9位数，随着用户量增大，可以不断扩展
+     */
     public Long getNo() {
         return no;
     }
 
+    /**
+     * 设置开始使用9位数，随着用户量增大，可以不断扩展
+     *
+     * @param no 开始使用9位数，随着用户量增大，可以不断扩展
+     */
     public void setNo(Long no) {
         this.no = no;
     }
 
+    /**
+     * @return account
+     */
     public String getAccount() {
         return account;
     }
 
+    /**
+     * @param account
+     */
     public void setAccount(String account) {
-        this.account = account == null ? null : account.trim();
+        this.account = account;
     }
 
+    /**
+     * @return password
+     */
     public String getPassword() {
         return password;
     }
 
+    /**
+     * @param password
+     */
     public void setPassword(String password) {
-        this.password = password == null ? null : password.trim();
+        this.password = password;
     }
 
+    /**
+     * @return salt
+     */
     public String getSalt() {
         return salt;
     }
 
+    /**
+     * @param salt
+     */
     public void setSalt(String salt) {
-        this.salt = salt == null ? null : salt.trim();
+        this.salt = salt;
     }
 
+    /**
+     * @return phone
+     */
     public String getPhone() {
         return phone;
     }
 
+    /**
+     * @param phone
+     */
     public void setPhone(String phone) {
-        this.phone = phone == null ? null : phone.trim();
+        this.phone = phone;
     }
 
-    public String getNick_name() {
-        return nick_name;
+    /**
+     * @return nick_name
+     */
+    public String getNickName() {
+        return nickName;
     }
 
-    public void setNick_name(String nick_name) {
-        this.nick_name = nick_name == null ? null : nick_name.trim();
+    /**
+     * @param nickName
+     */
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 
+    /**
+     * @return avatar
+     */
     public String getAvatar() {
         return avatar;
     }
 
+    /**
+     * @param avatar
+     */
     public void setAvatar(String avatar) {
-        this.avatar = avatar == null ? null : avatar.trim();
+        this.avatar = avatar;
     }
 
+    /**
+     * @return email
+     */
     public String getEmail() {
         return email;
     }
 
+    /**
+     * @param email
+     */
     public void setEmail(String email) {
-        this.email = email == null ? null : email.trim();
+        this.email = email;
     }
 
+    /**
+     * 获取0未知 1男 2女
+     *
+     * @return sex - 0未知 1男 2女
+     */
     public Byte getSex() {
         return sex;
     }
 
+    /**
+     * 设置0未知 1男 2女
+     *
+     * @param sex 0未知 1男 2女
+     */
     public void setSex(Byte sex) {
         this.sex = sex;
     }
 
+    /**
+     * @return birthday
+     */
     public Date getBirthday() {
         return birthday;
     }
 
+    /**
+     * @param birthday
+     */
     public void setBirthday(Date birthday) {
         this.birthday = birthday;
     }
 
+    /**
+     * 获取0待审核 1正常 2禁用
+     *
+     * @return status - 0待审核 1正常 2禁用
+     */
     public Byte getStatus() {
         return status;
     }
 
+    /**
+     * 设置0待审核 1正常 2禁用
+     *
+     * @param status 0待审核 1正常 2禁用
+     */
     public void setStatus(Byte status) {
         this.status = status;
     }
 
-    public Date getCreate_time() {
-        return create_time;
+    /**
+     * @return create_time
+     */
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public void setCreate_time(Date create_time) {
-        this.create_time = create_time;
+    /**
+     * @param createTime
+     */
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
-    public Date getUpdate_time() {
-        return update_time;
+    /**
+     * @return update_time
+     */
+    public Date getUpdateTime() {
+        return updateTime;
     }
 
-    public void setUpdate_time(Date update_time) {
-        this.update_time = update_time;
-    }
-
-    @Override
-    public boolean equals(Object that) {
-        if (this == that) {
-            return true;
-        }
-        if (that == null) {
-            return false;
-        }
-        if (getClass() != that.getClass()) {
-            return false;
-        }
-        User other = (User) that;
-        return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getNo() == null ? other.getNo() == null : this.getNo().equals(other.getNo()))
-            && (this.getAccount() == null ? other.getAccount() == null : this.getAccount().equals(other.getAccount()))
-            && (this.getPassword() == null ? other.getPassword() == null : this.getPassword().equals(other.getPassword()))
-            && (this.getSalt() == null ? other.getSalt() == null : this.getSalt().equals(other.getSalt()))
-            && (this.getPhone() == null ? other.getPhone() == null : this.getPhone().equals(other.getPhone()))
-            && (this.getNick_name() == null ? other.getNick_name() == null : this.getNick_name().equals(other.getNick_name()))
-            && (this.getAvatar() == null ? other.getAvatar() == null : this.getAvatar().equals(other.getAvatar()))
-            && (this.getEmail() == null ? other.getEmail() == null : this.getEmail().equals(other.getEmail()))
-            && (this.getSex() == null ? other.getSex() == null : this.getSex().equals(other.getSex()))
-            && (this.getBirthday() == null ? other.getBirthday() == null : this.getBirthday().equals(other.getBirthday()))
-            && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
-            && (this.getCreate_time() == null ? other.getCreate_time() == null : this.getCreate_time().equals(other.getCreate_time()))
-            && (this.getUpdate_time() == null ? other.getUpdate_time() == null : this.getUpdate_time().equals(other.getUpdate_time()));
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-        result = prime * result + ((getNo() == null) ? 0 : getNo().hashCode());
-        result = prime * result + ((getAccount() == null) ? 0 : getAccount().hashCode());
-        result = prime * result + ((getPassword() == null) ? 0 : getPassword().hashCode());
-        result = prime * result + ((getSalt() == null) ? 0 : getSalt().hashCode());
-        result = prime * result + ((getPhone() == null) ? 0 : getPhone().hashCode());
-        result = prime * result + ((getNick_name() == null) ? 0 : getNick_name().hashCode());
-        result = prime * result + ((getAvatar() == null) ? 0 : getAvatar().hashCode());
-        result = prime * result + ((getEmail() == null) ? 0 : getEmail().hashCode());
-        result = prime * result + ((getSex() == null) ? 0 : getSex().hashCode());
-        result = prime * result + ((getBirthday() == null) ? 0 : getBirthday().hashCode());
-        result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
-        result = prime * result + ((getCreate_time() == null) ? 0 : getCreate_time().hashCode());
-        result = prime * result + ((getUpdate_time() == null) ? 0 : getUpdate_time().hashCode());
-        return result;
+    /**
+     * @param updateTime
+     */
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }

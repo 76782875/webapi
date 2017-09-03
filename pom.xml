@@ -98,6 +98,22 @@
                 <artifactId>webapi-service</artifactId>
                 <version>1.0-SNAPSHOT</version>
             </dependency>
+            <!--pagehelper-->
+            <dependency>
+                <groupId>tk.mybatis</groupId>
+                <artifactId>mapper-spring-boot-starter</artifactId>
+                <version>1.1.4</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper-spring-boot-starter</artifactId>
+                <version>1.2.1</version>
+            </dependency>
+            <dependency>
+                <groupId>tk.mybatis</groupId>
+                <artifactId>mapper</artifactId>
+                <version>3.4.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>

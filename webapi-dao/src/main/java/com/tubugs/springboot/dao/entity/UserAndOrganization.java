@@ -1,67 +1,76 @@
 package com.tubugs.springboot.dao.entity;
 
-import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.*;
 
-public class UserAndOrganization extends UserAndOrganizationKey implements Serializable {
-    private Long user_no;
+@Table(name = "user_and_organization")
+public class UserAndOrganization {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private Long organization_id;
+    @Column(name = "user_no")
+    private Long userNo;
 
-    private Date create_time;
+    @Column(name = "organization_id")
+    private Long organizationId;
 
-    private static final long serialVersionUID = 1L;
+    @Column(name = "create_time")
+    private Date createTime;
 
-    public Long getUser_no() {
-        return user_no;
+    /**
+     * @return id
+     */
+    public Long getId() {
+        return id;
     }
 
-    public void setUser_no(Long user_no) {
-        this.user_no = user_no;
+    /**
+     * @param id
+     */
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public Long getOrganization_id() {
-        return organization_id;
+    /**
+     * @return user_no
+     */
+    public Long getUserNo() {
+        return userNo;
     }
 
-    public void setOrganization_id(Long organization_id) {
-        this.organization_id = organization_id;
+    /**
+     * @param userNo
+     */
+    public void setUserNo(Long userNo) {
+        this.userNo = userNo;
     }
 
-    public Date getCreate_time() {
-        return create_time;
+    /**
+     * @return organization_id
+     */
+    public Long getOrganizationId() {
+        return organizationId;
     }
 
-    public void setCreate_time(Date create_time) {
-        this.create_time = create_time;
+    /**
+     * @param organizationId
+     */
+    public void setOrganizationId(Long organizationId) {
+        this.organizationId = organizationId;
     }
 
-    @Override
-    public boolean equals(Object that) {
-        if (this == that) {
-            return true;
-        }
-        if (that == null) {
-            return false;
-        }
-        if (getClass() != that.getClass()) {
-            return false;
-        }
-        UserAndOrganization other = (UserAndOrganization) that;
-        return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getUser_no() == null ? other.getUser_no() == null : this.getUser_no().equals(other.getUser_no()))
-            && (this.getOrganization_id() == null ? other.getOrganization_id() == null : this.getOrganization_id().equals(other.getOrganization_id()))
-            && (this.getCreate_time() == null ? other.getCreate_time() == null : this.getCreate_time().equals(other.getCreate_time()));
+    /**
+     * @return create_time
+     */
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-        result = prime * result + ((getUser_no() == null) ? 0 : getUser_no().hashCode());
-        result = prime * result + ((getOrganization_id() == null) ? 0 : getOrganization_id().hashCode());
-        result = prime * result + ((getCreate_time() == null) ? 0 : getCreate_time().hashCode());
-        return result;
+    /**
+     * @param createTime
+     */
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 }

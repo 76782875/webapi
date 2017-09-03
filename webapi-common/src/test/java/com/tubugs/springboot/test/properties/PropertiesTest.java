@@ -13,7 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 public class PropertiesTest {
 
-    @Value("${sms.aliyun.verifycode.signName}")
+    @Value("${tubugs.sms.aliyun.verifycode.signName}")
     private String signName;
 
     @Test

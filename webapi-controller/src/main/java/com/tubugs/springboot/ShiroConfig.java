@@ -1,8 +1,6 @@
 package com.tubugs.springboot;
 
 import com.tubugs.springboot.frame.shiro.MyShiroRealm;
-import com.tubugs.springboot.frame.shiro.MyShiroLoginLimit;
-import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.context.annotation.Bean;
@@ -43,19 +41,10 @@ public class ShiroConfig {
         return filter;
     }
 
-    @Bean
-    public MyShiroLoginLimit retryLimitHashedCredentialsMatcher() {
-        MyShiroLoginLimit matcher = new MyShiroLoginLimit();
-        matcher.setHashAlgorithmName("md5");
-        matcher.setHashIterations(2);
-        matcher.setStoredCredentialsHexEncoded(true);
-        return matcher;
-    }
 
     @Bean
-    public MyShiroRealm myShiroRealm(HashedCredentialsMatcher matcher) {
+    public MyShiroRealm myShiroRealm() {
         MyShiroRealm myShiroRealm = new MyShiroRealm();
-        myShiroRealm.setCredentialsMatcher(matcher);
         return myShiroRealm;
     }
 

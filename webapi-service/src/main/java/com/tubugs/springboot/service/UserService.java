@@ -1,32 +1,29 @@
 package com.tubugs.springboot.service;
 
+import com.tubugs.springboot.ability.file.FileAbility;
+import com.tubugs.springboot.ability.sms.SMSAbility;
 import com.tubugs.springboot.consts.FileTagKey;
 import com.tubugs.springboot.consts.RedisKey;
 import com.tubugs.springboot.consts.SessionKey;
 import com.tubugs.springboot.consts.StatusKey;
-import com.tubugs.springboot.dao.UserMapper;
 import com.tubugs.springboot.dao.entity.User;
-import com.tubugs.springboot.dao.entity.UserExample;
+import com.tubugs.springboot.dao.mapper.UserMapper;
 import com.tubugs.springboot.dto.ResultDto;
 import com.tubugs.springboot.frame.SessionManager;
 import com.tubugs.springboot.helper.AutoLoginHelper;
 import com.tubugs.springboot.helper.RedisHelper;
-import com.tubugs.springboot.ability.file.FileAbility;
-import com.tubugs.springboot.ability.sms.SMSAbility;
 import com.tubugs.springboot.utils.NumberUtil;
+import com.tubugs.springboot.utils.PwdUtil;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.ExcessiveAttemptsException;
-import org.apache.shiro.authc.IncorrectCredentialsException;
-import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
-import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import tk.mybatis.mapper.entity.Example;
 
 import java.io.IOException;
 import java.util.Date;
@@ -40,8 +37,7 @@ import java.util.concurrent.TimeUnit;
 public class UserService {
     //用户密码加密
     private final RandomNumberGenerator randomNumberGenerator = new SecureRandomNumberGenerator();
-    private final String algorithmName = "md5";
-    private final int hashIterations = 2;
+
 
     //自动登录加密分隔符
     private final String SPLIT_STRING = "《-----》";
@@ -64,8 +60,8 @@ public class UserService {
      * @return
      */
     public User getUserByAccount(String account) {
-        UserExample example = new UserExample();
-        example.createCriteria().andAccountEqualTo(account);
+        Example example = new Example(User.class);
+        example.createCriteria().andEqualTo("account", account);
         List<User> users = userMapper.selectByExample(example);
         return users != null && users.size() > 0 ? users.get(0) : null;
     }
@@ -109,12 +105,12 @@ public class UserService {
         //注册
         User user = new User();
         user.setAccount(account);
-        user.setCreate_time(new Date());
-        user.setUpdate_time(new Date());
+        user.setCreateTime(new Date());
+        user.setUpdateTime(new Date());
         user.setStatus(StatusKey.Available);
         String salt = randomNumberGenerator.nextBytes().toHex();
         user.setSalt(salt);
-        user.setPassword(computePwdWithSalt(password, salt));
+        user.setPassword(PwdUtil.computePwdWithSalt(password, salt));
         int tryTime = 3;
         while (tryTime > 0) {
             try {
@@ -147,6 +143,10 @@ public class UserService {
             return new ResultDto(false, "密码错误"); //TODO 改成配置
         } catch (ExcessiveAttemptsException ex) {
             return new ResultDto(false, "连续输错5次密码，1天内不能继续登录"); //TODO 改成配置
+        } catch (UnknownAccountException ex) {
+            return new ResultDto(false, "用户不存在"); //TODO 改成配置
+        } catch (DisabledAccountException ex) {
+            return new ResultDto(false, "用户状态不可用"); //TODO 改成配置
         }
         //生成自动登录的token
         String auto_login_key = String.format(RedisKey.LOGIN_AUTO, account);
@@ -197,10 +197,10 @@ public class UserService {
      * @throws IOException
      */
     public Boolean modifyInfo(String account, String nick_name, MultipartFile avatar, String email, byte sex, String birthday) throws IOException {
-        UserExample example = new UserExample();
-        example.createCriteria().andAccountEqualTo(account);
+        Example example = new Example(User.class);
+        example.createCriteria().andEqualTo("account", account);
         User user = new User();
-        user.setNick_name(nick_name);
+        user.setNickName(nick_name);
         if (avatar != null)
             user.setAvatar(fileAbility.savePicture(FileTagKey.AVATAR, avatar));
         user.setEmail(email);
@@ -223,7 +223,7 @@ public class UserService {
         User user = getUserByAccount(account);
         if (user == null)
             return new ResultDto(false, "用户不存在");
-        String computed_old_pwd = computePwdWithSalt(old_pwd, user.getSalt());
+        String computed_old_pwd = PwdUtil.computePwdWithSalt(old_pwd, user.getSalt());
         if (!user.getPassword().equals(computed_old_pwd))
             return new ResultDto(false, "原始密码错误");
 
@@ -301,16 +301,6 @@ public class UserService {
         return new ResultDto(true, "成功");
     }
 
-    /**
-     * 对密码做加盐计算
-     *
-     * @param pwd
-     * @param salt
-     * @return
-     */
-    private String computePwdWithSalt(String pwd, String salt) {
-        return new SimpleHash(algorithmName, pwd, ByteSource.Util.bytes(salt), hashIterations).toHex();
-    }
 
     /**
      * 更新用户密码
@@ -320,11 +310,11 @@ public class UserService {
      * @param pwd
      */
     private void updateUserPwd(String account, String salt, String pwd) {
-        String computed_pwd = computePwdWithSalt(pwd, salt);
+        String computed_pwd = PwdUtil.computePwdWithSalt(pwd, salt);
         User user = new User();
         user.setPassword(computed_pwd);
-        UserExample example = new UserExample();
-        example.createCriteria().andAccountEqualTo(account);
+        Example example = new Example(User.class);
+        example.createCriteria().andEqualTo("account", account);
         userMapper.updateByExampleSelective(user, example);
     }
 }

@@ -5,55 +5,31 @@
     <!-- 引入配置文件 -->
     <properties resource="application.properties"/>
 
-    <context id="mysqlTables" targetRuntime="MyBatis3" defaultModelType="hierarchical">
-        <plugin type="org.mybatis.generator.plugins.SerializablePlugin"/>
-        <plugin type="org.mybatis.generator.plugins.EqualsHashCodePlugin"/>
+    <context id="mysqlTables" targetRuntime="MyBatis3Simple" defaultModelType="conditional">
+        <property name="beginningDelimiter" value="`"/>
+        <property name="endingDelimiter" value="`"/>
 
-        <commentGenerator>
-            <property name="suppressAllComments" value="true"/>
-            <property name="suppressDate" value="true"/>
-        </commentGenerator>
+        <plugin type="tk.mybatis.mapper.generator.MapperPlugin">
+            <property name="mappers" value="${mapper.mappers}"/>
+        </plugin>
 
-        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="${spring.datasource.url}"
-                        userId="${spring.datasource.username}" password="${spring.datasource.password}"/>
-        <javaTypeResolver>
-            <property name="forceBigDecimals" value="false"/>
-        </javaTypeResolver>
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="${spring.datasource.url}"
+                        userId="${spring.datasource.username}"
+                        password="${spring.datasource.password}">
+        </jdbcConnection>
 
-        <javaModelGenerator targetPackage="${package}.dao.entity" targetProject="src/main/java">
-            <property name="enableSubPackages" value="true"/>
-            <property name="trimStrings" value="true"/>
-        </javaModelGenerator>
+        <javaModelGenerator targetPackage="${package}.dao.entity" targetProject="src/main/java"/>
 
-        <sqlMapGenerator targetPackage="mapper" targetProject="src/main/resources">
-            <property name="enableSubPackages" value="true"/>
-        </sqlMapGenerator>
+        <sqlMapGenerator targetPackage="mapper" targetProject="src/main/resources"/>
 
-        <javaClientGenerator targetPackage="${package}.dao" targetProject="src/main/java"
-                             type="XMLMAPPER">
-            <property name="enableSubPackages" value="true"/>
-        </javaClientGenerator>
+        <javaClientGenerator targetPackage="${package}.dao.mapper" targetProject="src/main/java" type="XMLMAPPER"/>
 
-        <!--<table tableName="user" domainObjectName="User">-->
-        <!--<property name="useActualColumnNames" value="true"/>-->
-        <!--</table>-->
-        <!--<table tableName="role" domainObjectName="Role">-->
-        <!--<property name="useActualColumnNames" value="true"/>-->
-        <!--</table>-->
-        <!--<table tableName="permission" domainObjectName="Permission">-->
-        <!--<property name="useActualColumnNames" value="true"/>-->
-        <!--</table>-->
-        <!--<table tableName="organization" domainObjectName="Organization">-->
-        <!--<property name="useActualColumnNames" value="true"/>-->
-        <!--</table>-->
-        <!--<table tableName="user_and_role" domainObjectName="UserAndRole">-->
-        <!--<property name="useActualColumnNames" value="true"/>-->
-        <!--</table>-->
-        <!--<table tableName="user_and_organization" domainObjectName="UserAndOrganization">-->
-        <!--<property name="useActualColumnNames" value="true"/>-->
-        <!--</table>-->
-        <!--<table tableName="role_and_permission" domainObjectName="RoleAndPermission">-->
-        <!--<property name="useActualColumnNames" value="true"/>-->
-        <!--</table>-->
+        <table tableName="%">
+            <!--mysql 配置-->
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+            <!--oracle 配置-->
+            <!--<generatedKey column="id" sqlStatement="select SEQ_{1}.nextval from dual" identity="false" type="pre"/>-->
+        </table>
     </context>
 </generatorConfiguration>

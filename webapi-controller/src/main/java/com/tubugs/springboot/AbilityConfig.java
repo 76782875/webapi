@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
  * Created by xuzhang on 2017/9/1.
  */
 @Configuration
-public class ServiceConfig {
+public class AbilityConfig {
     @Bean
     public PushAbility push() {
         return new PushAbilityAliyunImpl();

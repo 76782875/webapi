@@ -1,11 +1,13 @@
 package com.tubugs.springboot.test.ability.file;
 
 import com.tubugs.springboot.ability.file.FileAbility;
+import com.tubugs.springboot.ability.file.FileAbilityLocalImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
@@ -15,7 +17,6 @@ import java.io.IOException;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@Import(FileLocalConfig.class)
 public class FileLocalTest {
 
     @Autowired
@@ -24,5 +25,13 @@ public class FileLocalTest {
     @Test
     public void savePicture() throws IOException {
         fileAbility.savePicture("download", "https://www.baidu.com/img/bd_logo1.png");
+    }
+
+    @TestConfiguration
+    static class Config {
+        @Bean
+        public FileAbility push() {
+            return new FileAbilityLocalImpl();
+        }
     }
 }

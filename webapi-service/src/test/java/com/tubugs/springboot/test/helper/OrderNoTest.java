@@ -1,5 +1,6 @@
 package com.tubugs.springboot.test.helper;
 
+import com.tubugs.springboot.Application;
 import com.tubugs.springboot.helper.OrderNoHelper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
