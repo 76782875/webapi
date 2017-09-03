@@ -33,6 +33,17 @@ public class Validator {
     }
 
     /**
+     * 非空校验
+     *
+     * @param param
+     * @param desc
+     */
+    public static <T> void checkNotNull(T param, String desc) {
+        if (param == null)
+            throw new ParamError(String.format("%s 不能为空", desc));
+    }
+
+    /**
      * 字符串长度校验
      *
      * @param min
@@ -66,8 +77,7 @@ public class Validator {
             min = 0;
         if (max == null)
             max = Integer.MAX_VALUE;
-        if (param == null)
-            throw new ParamError(String.format("%s 不能为空", desc));
+        checkNotNull(param, "desc");
         if (param > max) {
             throw new ParamError(String.format("%s 不能大于 %s", desc, max));
         } else if (param < min) {

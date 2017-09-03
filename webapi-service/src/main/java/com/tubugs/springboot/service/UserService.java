@@ -6,8 +6,12 @@ import com.tubugs.springboot.consts.FileTagKey;
 import com.tubugs.springboot.consts.RedisKey;
 import com.tubugs.springboot.consts.SessionKey;
 import com.tubugs.springboot.consts.StatusKey;
+import com.tubugs.springboot.dao.entity.Role;
 import com.tubugs.springboot.dao.entity.User;
+import com.tubugs.springboot.dao.entity.UserOauth;
+import com.tubugs.springboot.dao.mapper.ExtMapper;
 import com.tubugs.springboot.dao.mapper.UserMapper;
+import com.tubugs.springboot.dao.mapper.UserOauthMapper;
 import com.tubugs.springboot.dto.ResultDto;
 import com.tubugs.springboot.frame.SessionManager;
 import com.tubugs.springboot.frame.validator.Validator;
@@ -17,8 +21,6 @@ import com.tubugs.springboot.utils.NumberUtil;
 import com.tubugs.springboot.utils.PwdUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
-import org.apache.shiro.crypto.RandomNumberGenerator;
-import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,19 +34,19 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 用户
  * Created by xuzhang on 2017/9/1.
  */
 @Service
 public class UserService {
-    //用户密码加密
-    private final RandomNumberGenerator randomNumberGenerator = new SecureRandomNumberGenerator();
 
-
-    //自动登录加密分隔符
+    //加密分隔符
     private final String SPLIT_STRING = "《-----》";
 
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private UserOauthMapper userOauthMapper;
     @Autowired
     private AutoLoginHelper autoLoginHelper;
     @Autowired
@@ -53,6 +55,8 @@ public class UserService {
     private FileAbility fileAbility;
     @Autowired
     private SMSAbility smsAbility;
+    @Autowired
+    private ExtMapper extMapper;
 
     /**
      * 查询用户账号数据
@@ -127,7 +131,7 @@ public class UserService {
         SessionManager.removeSession(SessionKey.REGISTER_CODE);
         SessionManager.removeSession(SessionKey.REGISTER_PHONE);
         //6.注册
-        String salt = randomNumberGenerator.nextBytes().toHex();
+        String salt = PwdUtil.generateSalt();
         User user = new User();
         user.setAccount(account);
         user.setPhone(account);
@@ -351,6 +355,30 @@ public class UserService {
         SessionManager.removeSession(SessionKey.FORGET_CODE);
         SessionManager.removeSession(SessionKey.FORGET_CODE_PASS);
         return new ResultDto(true, "成功");
+    }
+
+    /**
+     * 查询用户角色
+     *
+     * @param user_no
+     * @return
+     */
+    public List<Role> queryUserRole(Long user_no) {
+        Validator.checkNotNull(user_no, "用户编号");
+        return extMapper.queryUserRole(user_no);
+    }
+
+    /**
+     * 查询用户三方账号
+     *
+     * @param user_no
+     * @return
+     */
+    public List<UserOauth> queryUserOauth(Long user_no) {
+        Validator.checkNotNull(user_no, "用户编号");
+        Example e = new Example(UserOauth.class);
+        e.createCriteria().andEqualTo("user_no");
+        return userOauthMapper.selectByExample(e);
     }
 
     /**

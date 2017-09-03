@@ -1,7 +1,6 @@
 package com.tubugs.springboot.test.mybatis;
 
 import com.github.pagehelper.PageHelper;
-import com.tubugs.springboot.Application;
 import com.tubugs.springboot.dao.entity.Role;
 import com.tubugs.springboot.dao.mapper.RoleMapper;
 import org.junit.Test;

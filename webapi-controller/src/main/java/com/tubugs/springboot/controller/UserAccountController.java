@@ -1,6 +1,5 @@
-package com.tubugs.springboot.controller.v1;
+package com.tubugs.springboot.controller;
 
-import com.tubugs.springboot.controller.BaseController;
 import com.tubugs.springboot.dto.ResultDto;
 import com.tubugs.springboot.frame.ResponseVo;
 import com.tubugs.springboot.service.UserService;
@@ -19,8 +18,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * Created by xuzhang on 2017/8/26.
  */
 @Controller
-@RequestMapping("v1/user_account/")
-@Api(tags = "v1/user_account/", description = "用户账号")
+@RequestMapping("user_account")
+@Api(tags = "user_account", description = "用户账号")
 public class UserAccountController extends BaseController {
 
     @Autowired

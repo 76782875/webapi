@@ -1,6 +1,5 @@
-package com.tubugs.springboot.controller.v1;
+package com.tubugs.springboot.controller;
 
-import com.tubugs.springboot.controller.BaseController;
 import com.tubugs.springboot.dto.ResultDto;
 import com.tubugs.springboot.frame.ResponseVo;
 import com.tubugs.springboot.frame.SessionManager;
@@ -21,8 +20,8 @@ import java.io.IOException;
  * Created by xuzhang on 2017/9/1.
  */
 @Controller
-@RequestMapping("v1/user_person_center/")
-@Api(tags = "v1/user_person_center/", description = "用户个人中心")
+@RequestMapping("user_person_center")
+@Api(tags = "user_person_center", description = "用户个人中心")
 public class UserPersonCenterController extends BaseController {
     @Autowired
     private UserService userService;

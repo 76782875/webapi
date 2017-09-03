@@ -12,9 +12,6 @@ public class Role {
 
     private String description;
 
-    @Column(name = "sort_order")
-    private Integer sortOrder;
-
     @Column(name = "create_time")
     private Date createTime;
 
@@ -61,20 +58,6 @@ public class Role {
      */
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    /**
-     * @return sort_order
-     */
-    public Integer getSortOrder() {
-        return sortOrder;
-    }
-
-    /**
-     * @param sortOrder
-     */
-    public void setSortOrder(Integer sortOrder) {
-        this.sortOrder = sortOrder;
     }
 
     /**

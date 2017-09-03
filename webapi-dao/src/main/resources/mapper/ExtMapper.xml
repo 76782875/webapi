@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tubugs.springboot.dao.mapper.ExtMapper">
+    <!--返回的实体对象-->
+    <resultMap id="Role" type="com.tubugs.springboot.dao.entity.Role">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+    <resultMap id="Permission" type="com.tubugs.springboot.dao.entity.Permission">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="value" jdbcType="VARCHAR" property="value"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+    <resultMap id="User" type="com.tubugs.springboot.dao.entity.User">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="no" jdbcType="BIGINT" property="no"/>
+        <result column="account" jdbcType="VARCHAR" property="account"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="salt" jdbcType="VARCHAR" property="salt"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="nick_name" jdbcType="VARCHAR" property="nickName"/>
+        <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="sex" jdbcType="TINYINT" property="sex"/>
+        <result column="birthday" jdbcType="TIMESTAMP" property="birthday"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+    <resultMap id="UserRoleDto" type="com.tubugs.springboot.dao.dto.UserRoleDto">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="user_no" jdbcType="VARCHAR" property="userNo"/>
+    </resultMap>
+    <resultMap id="UserOrganizationDto" type="com.tubugs.springboot.dao.dto.UserOrganizationDto">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="user_no" jdbcType="VARCHAR" property="userNo"/>
+    </resultMap>
+    <resultMap id="UserOauthDto" type="com.tubugs.springboot.dao.dto.UserOauthDto">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="user_no" jdbcType="VARCHAR" property="userNo"/>
+    </resultMap>
+
+    <!--复用代码块-->
+    <sql id="UserAllPaging">
+        <where>
+            1=1
+            <if test="keywords">
+                AND `user`.account LIKE concat(#{keyword},'%')
+            </if>
+            <if test="userStatusFilter">
+                AND `user`.status =#{userStatusFilter}
+            </if>
+            <if test="roleFilter">
+                AND user_and_role.role_id=#{roleFilter}
+            </if>
+            <if test="organizationFilter">
+                AND user_and_organization.organization_id =#{organizationFilter}
+            </if>
+        </where>
+    </sql>
+
+    <!--查询用户角色-->
+    <select id="selectUserRole" resultMap="Role">
+        SELECT
+            r.*
+        FROM
+            role r
+        INNER JOIN user_and_role u ON r.id = u.role_id
+        WHERE
+            u.userNo = #{userNo};
+    </select>
+    <!--查询用户角色(批量)-->
+    <select id="queryUserRoleBatch" resultMap="UserRoleDto">
+        SELECT
+        r.`name`,
+        r.id,
+        u.user_no
+        FROM
+        role r
+        INNER JOIN user_and_role u
+        WHERE
+        r.id = u.role_id AND user_no IN
+        <foreach collection="userNos" index="index" item="tag" open="(" separator="," close=")">
+            tag
+        </foreach>
+    </select>
+    <!--查询角色权限-->
+    <select id="selectRolePermission" resultMap="Permission">
+        SELECT
+        p.*
+        FROM
+        role r
+        INNER JOIN role_and_permission rp ON r.id = rp.role_id
+        INNER JOIN permission p ON rp.permission_id = p.id
+        WHERE r.id= #{roleId};
+    </select>
+    <!--查询用户组织(批量)-->
+    <select id="queryUserOrganizationBatch" resultMap="UserOrganizationDto">
+        SELECT
+        r.`name`,
+        r.id,
+        u.user_no
+        FROM
+        organization r
+        INNER JOIN user_and_organization u
+        WHERE
+        r.id = u.organization_id AND user_no IN
+        <foreach collection="userNos" index="index" item="tag" open="(" separator="," close=")">
+            tag
+        </foreach>
+    </select>
+    <!--查询用户三方账号(批量)-->
+    <select id="queryUserOauthBatch" resultMap="UserOauthDto">
+        SELECT
+        r.oauth_name name,
+        r.id,
+        u.user_no
+        FROM
+        user_oauth r
+        WHERE
+        user_no IN
+        <foreach collection="userNos" index="index" item="tag" open="(" separator="," close=")">
+            tag
+        </foreach>
+    </select>
+    <!--分页查询用户全量数据-->
+    <select id="queryUserAllPaging" resultMap="User">
+        SELECT
+        `user`.`no`,
+        `user`.account,
+        `user`.phone,
+        `user`.nick_name,
+        `user`.avatar,
+        `user`.email,
+        `user`.sex,
+        `user`.birthday,
+        `user`.status,
+        `user`.create_time
+        FROM
+        `user`
+        LEFT JOIN user_and_role ON `user`.`no` = user_and_role.user_no
+        LEFT JOIN user_and_organization ON `user`.`no` = user_and_organization.user_no
+        <include refid="UserAllPaging"/>
+        ORDER BY id desc
+        limit #{pageIndex}*#{pageSize}-#{pageSize},#{pageIndex}*#{pageSize};
+    </select>
+    <!--查询用户总数-->
+    <select id="countUserAllPaging" resultType="java.lang.Integer">
+        SELECT
+        COUNT(*)
+        FROM
+        `user`
+        LEFT JOIN user_and_role ON `user`.`no` = user_and_role.user_no
+        LEFT JOIN user_and_organization ON `user`.`no` = user_and_organization.user_no
+        <include refid="UserAllPaging"/>
+    </select>
+</mapper>

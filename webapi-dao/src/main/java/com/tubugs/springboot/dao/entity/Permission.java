@@ -14,9 +14,6 @@ public class Permission {
 
     private String value;
 
-    @Column(name = "sort_order")
-    private Integer sortOrder;
-
     @Column(name = "create_time")
     private Date createTime;
 
@@ -77,20 +74,6 @@ public class Permission {
      */
     public void setValue(String value) {
         this.value = value;
-    }
-
-    /**
-     * @return sort_order
-     */
-    public Integer getSortOrder() {
-        return sortOrder;
-    }
-
-    /**
-     * @param sortOrder
-     */
-    public void setSortOrder(Integer sortOrder) {
-        this.sortOrder = sortOrder;
     }
 
     /**

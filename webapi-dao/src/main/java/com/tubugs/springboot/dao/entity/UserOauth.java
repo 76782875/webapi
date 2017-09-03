@@ -3,16 +3,23 @@ package com.tubugs.springboot.dao.entity;
 import java.util.Date;
 import javax.persistence.*;
 
-public class Organization {
+@Table(name = "user_oauth")
+public class UserOauth {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long pid;
+    @Column(name = "user_no")
+    private Long userNo;
 
-    private String name;
+    /**
+     * 三方登录类型，常用的有（qq、wechat）
+     */
+    @Column(name = "oauth_name")
+    private String oauthName;
 
-    private String description;
+    @Column(name = "oauth_id")
+    private String oauthId;
 
     @Column(name = "create_time")
     private Date createTime;
@@ -35,45 +42,49 @@ public class Organization {
     }
 
     /**
-     * @return pid
+     * @return user_no
      */
-    public Long getPid() {
-        return pid;
+    public Long getUserNo() {
+        return userNo;
     }
 
     /**
-     * @param pid
+     * @param userNo
      */
-    public void setPid(Long pid) {
-        this.pid = pid;
+    public void setUserNo(Long userNo) {
+        this.userNo = userNo;
     }
 
     /**
-     * @return name
+     * 获取三方登录类型，常用的有（qq、wechat）
+     *
+     * @return oauth_name - 三方登录类型，常用的有（qq、wechat）
      */
-    public String getName() {
-        return name;
+    public String getOauthName() {
+        return oauthName;
     }
 
     /**
-     * @param name
+     * 设置三方登录类型，常用的有（qq、wechat）
+     *
+     * @param oauthName 三方登录类型，常用的有（qq、wechat）
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setOauthName(String oauthName) {
+        this.oauthName = oauthName;
     }
 
     /**
-     * @return description
+     * @return oauth_id
      */
-    public String getDescription() {
-        return description;
+    public String getOauthId() {
+        return oauthId;
     }
 
     /**
-     * @param description
+     * @param oauthId
      */
-    public void setDescription(String description) {
-        this.description = description;
+    public void setOauthId(String oauthId) {
+        this.oauthId = oauthId;
     }
 
     /**

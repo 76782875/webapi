@@ -6,7 +6,7 @@
       WARNING - @mbg.generated
     -->
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="user_no" jdbcType="BIGINT" property="userNo" />
+    <result column="userNo" jdbcType="BIGINT" property="userNo" />
     <result column="role_id" jdbcType="BIGINT" property="roleId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
