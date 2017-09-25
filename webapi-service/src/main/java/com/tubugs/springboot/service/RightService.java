@@ -1,9 +1,6 @@
 package com.tubugs.springboot.service;
 
-import com.tubugs.springboot.dao.entity.Organization;
-import com.tubugs.springboot.dao.entity.Permission;
-import com.tubugs.springboot.dao.entity.Role;
-import com.tubugs.springboot.dao.entity.RoleAndPermission;
+import com.tubugs.springboot.dao.entity.*;
 import com.tubugs.springboot.dao.mapper.*;
 import com.tubugs.springboot.frame.validator.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +19,19 @@ public class RightService {
     @Autowired
     private RoleMapper roleMapper;
     @Autowired
-    private RoleAndPermissionMapper roleAndPermissionMapper;
-    @Autowired
     private OrganizationMapper organizationMapper;
     @Autowired
     private PermissionMapper permissionMapper;
     @Autowired
+    private RoleAndPermissionMapper roleAndPermissionMapper;
+    @Autowired
+    private UserAndRoleMapper userAndRoleMapper;
+    @Autowired
+    private UserAndOrganizationMapper userAndOrganizationMapper;
+    @Autowired
     private ExtMapper extMapper;
+
+    //region 角色管理
 
     /**
      * 查询所有角色
@@ -75,6 +78,9 @@ public class RightService {
         role.setUpdateTime(new Date());
         roleMapper.updateByPrimaryKeySelective(role);
     }
+    //endregion
+
+    //region 权限管理
 
     /**
      * 查询所有权限
@@ -123,6 +129,9 @@ public class RightService {
         t.setUpdateTime(new Date());
         permissionMapper.updateByPrimaryKeySelective(t);
     }
+    //endregion
+
+    //region 组织管理
 
     /**
      * 查询所有组织
@@ -180,6 +189,9 @@ public class RightService {
         t.setUpdateTime(new Date());
         organizationMapper.updateByPrimaryKeySelective(t);
     }
+    //endregion
+
+    //region 角色权限管理
 
     /**
      * 添加角色权限
@@ -221,5 +233,84 @@ public class RightService {
         Validator.checkNotNull(roleId, "角色编号");
         return extMapper.queryRolePermission(roleId);
     }
+    //endregion
 
+    //region 用户角色管理
+
+    /**
+     * 查询用户角色
+     *
+     * @param userNo
+     * @return
+     */
+    public List<Role> queryUserRole(Long userNo) {
+        Validator.checkNotNull(userNo, "用户编号");
+        return extMapper.queryUserRole(userNo);
+    }
+
+    /**
+     * 添加用户角色
+     *
+     * @param userNo
+     * @param roleId
+     */
+    public void addUserRole(Long userNo, Long roleId) {
+        Validator.checkNotNull(userNo, "用户编号");
+        Validator.checkNotNull(roleId, "角色编号");
+        UserAndRole t = new UserAndRole();
+        t.setUserNo(userNo);
+        t.setRoleId(roleId);
+        t.setCreateTime(new Date());
+        userAndRoleMapper.insert(t);
+    }
+
+    /**
+     * 删除用户角色
+     *
+     * @param userNo
+     * @param roleId
+     */
+    public void deleteUserRole(Long userNo, Long roleId) {
+        Validator.checkNotNull(userNo, "用户编号");
+        Validator.checkNotNull(roleId, "角色编号");
+        UserAndRole t = new UserAndRole();
+        t.setUserNo(userNo);
+        t.setRoleId(roleId);
+        userAndRoleMapper.delete(t);
+    }
+    //endregion
+
+    //region 用户组织管理
+
+    /**
+     * 添加用户组织
+     *
+     * @param userNo
+     * @param organizationId
+     */
+    public void addUserOrganization(Long userNo, Long organizationId) {
+        Validator.checkNotNull(userNo, "用户编号");
+        Validator.checkNotNull(organizationId, "组织编号");
+        UserAndOrganization t = new UserAndOrganization();
+        t.setUserNo(userNo);
+        t.setOrganizationId(organizationId);
+        t.setCreateTime(new Date());
+        userAndOrganizationMapper.insert(t);
+    }
+
+    /**
+     * 删除用户组织
+     *
+     * @param userNo
+     * @param organizationId
+     */
+    public void deleteUserOrganization(Long userNo, Long organizationId) {
+        Validator.checkNotNull(userNo, "用户编号");
+        Validator.checkNotNull(organizationId, "组织编号");
+        UserAndOrganization t = new UserAndOrganization();
+        t.setUserNo(userNo);
+        t.setOrganizationId(organizationId);
+        userAndOrganizationMapper.delete(t);
+    }
+    //endregion
 }

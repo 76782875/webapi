@@ -6,12 +6,8 @@ import com.tubugs.springboot.consts.FileTagKey;
 import com.tubugs.springboot.consts.RedisKey;
 import com.tubugs.springboot.consts.SessionKey;
 import com.tubugs.springboot.consts.StatusKey;
-import com.tubugs.springboot.dao.entity.Role;
 import com.tubugs.springboot.dao.entity.User;
-import com.tubugs.springboot.dao.entity.UserOauth;
-import com.tubugs.springboot.dao.mapper.ExtMapper;
 import com.tubugs.springboot.dao.mapper.UserMapper;
-import com.tubugs.springboot.dao.mapper.UserOauthMapper;
 import com.tubugs.springboot.dto.ResultDto;
 import com.tubugs.springboot.frame.SessionManager;
 import com.tubugs.springboot.frame.validator.Validator;
@@ -46,8 +42,6 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
     @Autowired
-    private UserOauthMapper userOauthMapper;
-    @Autowired
     private AutoLoginHelper autoLoginHelper;
     @Autowired
     private RedisHelper redisHelper;
@@ -55,34 +49,8 @@ public class UserService {
     private FileAbility fileAbility;
     @Autowired
     private SMSAbility smsAbility;
-    @Autowired
-    private ExtMapper extMapper;
 
-    /**
-     * 查询用户账号数据
-     *
-     * @param account
-     * @return
-     */
-    public User getUserByAccount(String account) {
-        Example example = new Example(User.class);
-        example.createCriteria().andEqualTo("account", account);
-        List<User> users = userMapper.selectByExample(example);
-        return users != null && users.size() > 0 ? users.get(0) : null;
-    }
-
-    /**
-     * 查询用户账号数据
-     *
-     * @param phone
-     * @return
-     */
-    public User getUserByPhone(String phone) {
-        Example example = new Example(User.class);
-        example.createCriteria().andEqualTo("phone", phone);
-        List<User> users = userMapper.selectByExample(example);
-        return users != null && users.size() > 0 ? users.get(0) : null;
-    }
+    //region 登录、注册
 
     /**
      * 注册时发送手机验证码
@@ -143,7 +111,8 @@ public class UserService {
         int tryTime = 3;
         while (tryTime > 0) {
             try {
-                //生成的用户编号有可能会冲突，故尝试三次 TODO 暂不支持数据库水平分库
+                //生成的用户编号有可能会冲突，故尝试三次
+                // TODO 暂不支持数据库水平分库
                 user.setNo(NumberUtil.generateUserNo());
                 userMapper.insert(user);
                 return new ResultDto(true, "成功");
@@ -217,6 +186,9 @@ public class UserService {
         //4.登录
         return login(account, password);
     }
+    //endregion
+
+    //region 个人中心（修改个人资料、修改密码）
 
     /**
      * 修改个人资料
@@ -275,6 +247,9 @@ public class UserService {
         //5.重新登录
         return login(account, new_pwd);
     }
+    //endregion
+
+    //region 忘记密码
 
     /**
      * 忘记密码-发送验证码
@@ -356,29 +331,32 @@ public class UserService {
         SessionManager.removeSession(SessionKey.FORGET_CODE_PASS);
         return new ResultDto(true, "成功");
     }
+    //endregion
 
     /**
-     * 查询用户角色
+     * 查询用户账号数据
      *
-     * @param user_no
+     * @param account
      * @return
      */
-    public List<Role> queryUserRole(Long user_no) {
-        Validator.checkNotNull(user_no, "用户编号");
-        return extMapper.queryUserRole(user_no);
+    public User getUserByAccount(String account) {
+        Example example = new Example(User.class);
+        example.createCriteria().andEqualTo("account", account);
+        List<User> users = userMapper.selectByExample(example);
+        return users != null && users.size() > 0 ? users.get(0) : null;
     }
 
     /**
-     * 查询用户三方账号
+     * 查询用户账号数据
      *
-     * @param user_no
+     * @param phone
      * @return
      */
-    public List<UserOauth> queryUserOauth(Long user_no) {
-        Validator.checkNotNull(user_no, "用户编号");
-        Example e = new Example(UserOauth.class);
-        e.createCriteria().andEqualTo("user_no");
-        return userOauthMapper.selectByExample(e);
+    public User getUserByPhone(String phone) {
+        Example example = new Example(User.class);
+        example.createCriteria().andEqualTo("phone", phone);
+        List<User> users = userMapper.selectByExample(example);
+        return users != null && users.size() > 0 ? users.get(0) : null;
     }
 
     /**

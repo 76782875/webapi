@@ -19,11 +19,10 @@ public class OrderNoHelper {
 
     /**
      * 生成订单编号，共16位，前12位为时间，后4位通过Redis自增控制。
-     * //TODO 说明 1秒生成1万个订单可能性太小，故认为不会碰撞
-     *
      * @return
      */
     public long generate() {
+        //TODO 说明 1秒生成1万个订单可能性太小，故认为不会碰撞
         String time = String.valueOf(DateUtil.getString("yyMMddHHmmss"));
         String key = REDIS_KEY + time;
         String suffix = String.format("%04d", template.opsForValue().increment(key, 1));

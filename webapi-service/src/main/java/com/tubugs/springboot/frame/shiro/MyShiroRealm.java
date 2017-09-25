@@ -37,7 +37,7 @@ public class MyShiroRealm extends AuthorizingRealm {
         //获取用户的输入的账号.
         String account = (String) token.getPrincipal();
         String password = new String((char[]) token.getCredentials());
-        //TODO 实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro自己也是有时间间隔机制，2分钟内不会重复执行该方法
+        // 实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro自己也是有时间间隔机制，2分钟内不会重复执行该方法
         User user = userService.getUserByAccount(account);
         String key = String.format(RedisKey.LOGIN_FAIL_TIMES, account);
         // 用户不存在

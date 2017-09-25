@@ -4,13 +4,8 @@ import com.tubugs.springboot.consts.StatusKey;
 import com.tubugs.springboot.dao.dto.UserOauthDto;
 import com.tubugs.springboot.dao.dto.UserOrganizationDto;
 import com.tubugs.springboot.dao.dto.UserRoleDto;
-import com.tubugs.springboot.dao.entity.User;
-import com.tubugs.springboot.dao.entity.UserAndOrganization;
-import com.tubugs.springboot.dao.entity.UserAndRole;
-import com.tubugs.springboot.dao.mapper.ExtMapper;
-import com.tubugs.springboot.dao.mapper.UserAndOrganizationMapper;
-import com.tubugs.springboot.dao.mapper.UserAndRoleMapper;
-import com.tubugs.springboot.dao.mapper.UserMapper;
+import com.tubugs.springboot.dao.entity.*;
+import com.tubugs.springboot.dao.mapper.*;
 import com.tubugs.springboot.dto.PagingDto;
 import com.tubugs.springboot.dto.UserAllDto;
 import com.tubugs.springboot.frame.validator.Validator;
@@ -31,14 +26,13 @@ import java.util.List;
  */
 @Service
 public class UserManageService {
-    @Autowired
-    private UserAndRoleMapper userAndRoleMapper;
-    @Autowired
-    private UserAndOrganizationMapper userAndOrganizationMapper;
+
     @Autowired
     private UserMapper userMapper;
     @Autowired
     private ExtMapper extMapper;
+    @Autowired
+    private UserOauthMapper userOauthMapper;
 
     /**
      * 分页查询用户全量数据（user,user_role,user_organization,user_oauth）
@@ -93,68 +87,6 @@ public class UserManageService {
     }
 
     /**
-     * 添加用户角色
-     *
-     * @param userNo
-     * @param roleId
-     */
-    public void addUserRole(Long userNo, Long roleId) {
-        Validator.checkNotNull(userNo, "用户编号");
-        Validator.checkNotNull(roleId, "角色编号");
-        UserAndRole t = new UserAndRole();
-        t.setUserNo(userNo);
-        t.setRoleId(roleId);
-        t.setCreateTime(new Date());
-        userAndRoleMapper.insert(t);
-    }
-
-    /**
-     * 删除用户角色
-     *
-     * @param userNo
-     * @param roleId
-     */
-    public void deleteUserRole(Long userNo, Long roleId) {
-        Validator.checkNotNull(userNo, "用户编号");
-        Validator.checkNotNull(roleId, "角色编号");
-        UserAndRole t = new UserAndRole();
-        t.setUserNo(userNo);
-        t.setRoleId(roleId);
-        userAndRoleMapper.delete(t);
-    }
-
-    /**
-     * 添加用户组织
-     *
-     * @param userNo
-     * @param organizationId
-     */
-    public void addUserOrganization(Long userNo, Long organizationId) {
-        Validator.checkNotNull(userNo, "用户编号");
-        Validator.checkNotNull(organizationId, "组织编号");
-        UserAndOrganization t = new UserAndOrganization();
-        t.setUserNo(userNo);
-        t.setOrganizationId(organizationId);
-        t.setCreateTime(new Date());
-        userAndOrganizationMapper.insert(t);
-    }
-
-    /**
-     * 删除用户组织
-     *
-     * @param userNo
-     * @param organizationId
-     */
-    public void deleteUserOrganization(Long userNo, Long organizationId) {
-        Validator.checkNotNull(userNo, "用户编号");
-        Validator.checkNotNull(organizationId, "组织编号");
-        UserAndOrganization t = new UserAndOrganization();
-        t.setUserNo(userNo);
-        t.setOrganizationId(organizationId);
-        userAndOrganizationMapper.delete(t);
-    }
-
-    /**
      * 修改用户状态
      *
      * @param userNo
@@ -172,7 +104,7 @@ public class UserManageService {
     }
 
     /**
-     * 创建用户
+     * 创建用户（管理系统添加管理账号时使用）
      *
      * @param account
      * @param password
@@ -192,5 +124,18 @@ public class UserManageService {
         t.setCreateTime(new Date());
         t.setUpdateTime(new Date());
         userMapper.insert(t);
+    }
+
+    /**
+     * 查询用户三方账号
+     *
+     * @param userNo
+     * @return
+     */
+    public List<UserOauth> queryUserOauth(Long userNo) {
+        Validator.checkNotNull(userNo, "用户编号");
+        Example e = new Example(UserOauth.class);
+        e.createCriteria().andEqualTo("user_no");
+        return userOauthMapper.selectByExample(e);
     }
 }
